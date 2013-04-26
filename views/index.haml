@@ -1,0 +1,59 @@
+!!! 5
+%html{ lang: "en" }
+  %head
+    %meta{ charset: "utf-8" }
+    %title Air Conditioner Remote
+    %meta{ name: "viewport", content: "width=device-width, initial-scale=1.0, user-scalable=no" }
+    %link{ rel: "stylesheet", href: "stylesheets/style.css" }
+  %body
+    #container.container
+      %header
+        %h1 Air Conditioner Remote
+      #main{ role: "main" }
+        .alert.alert-success.alert-hidden Command sent.
+        .row
+          %button#power.btn{ "data-command": "power-on", "data-toggle": "button" }
+          %span.temperature
+            %span.digital 00
+            %span.deg &deg;
+            .btn-group.btn-group-vertical
+              %button.btn.up +
+              %button.btn.down -
+        .row
+          .btn-group{ "data-toggle": "buttons-radio" }
+            %button.btn.mode-freeze{ "data-command": "mode-freeze" }
+            %button.btn.mode-heat{ "data-command": "mode-heat" }
+            %button.btn.mode-fan{ "data-command": "mode-fan" }
+        .row
+          .btn-group{ "data-toggle": "buttons-radio" }
+            %button.btn.fan-small{ "data-command": "fan-small" }
+            %button.btn.fan-medium{ "data-command": "fan-medium" }
+            %button.btn.fan-large{ "data-command": "fan-large" }
+        .row.timer.timer-on
+          On in
+          %span.digital 00
+          .btn-group
+            %button.btn.up +
+            %button.btn.down -
+          minutes
+          %button.btn.btn-small.timer-set Set
+          %span.info.hidden
+            %button.btn.btn-small.timer-clear Clear
+            %span.label.label-info
+        .row.timer.timer-off
+          Off in
+          %span.digital 00
+          .btn-group
+            %button.btn.up +
+            %button.btn.down -
+          minutes
+          %button.btn.btn-small.timer-set Set
+          %span.info.hidden
+            %button.btn.btn-small.timer-clear Clear
+            %span.label.label-info
+    %script{ src: "javascripts/jquery.js" }
+    %script{ src: "javascripts/jquery.throttle-debounce.js" }
+    %script{ src: "javascripts/fastbutton.js" }
+    %script{ src: "javascripts/bootstrap.js" }
+    %script{ src: "javascripts/spinner.js" }
+    %script{ src: "javascripts/app.js" }
