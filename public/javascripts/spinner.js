@@ -26,7 +26,9 @@
         }.bind(this));
     };
 
-    Spinner.prototype.update = function () {
+    Spinner.prototype.update = function (value) {
+        this.value = value || this.value;
+
         this.$element.html(this.options.format(this.value));
     };
 
@@ -35,6 +37,8 @@
     };
 
     $.fn.spinner = function (method, options) {
+        var args = arguments;
+
         if (typeof method === 'object') {
             options = method;
             method = null;
@@ -49,9 +53,9 @@
             }
 
             if (data[method]) {
-                return data[method].apply(data, Array.prototype.slice.call(arguments, 1));
+                return data[method].apply(data, Array.prototype.slice.call(args, 1));
             } else if (typeof method === 'object' || !method) {
-                return data.init.apply(data, arguments);
+                return data.init.apply(data, args);
             } else {
                 $.error('Method ' + method + ' does not exist on jQuery.spinner');
             }
