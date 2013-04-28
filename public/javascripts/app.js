@@ -1,22 +1,61 @@
 !(function() {
     'use strict';
 
+    var timerInterval = null,
+        timers = {
+          timerOn: null,
+          timerOff: null
+        };
+
     function setState(state) {
-        $('#power')
-          .toggleClass('active', state.on)
-          .attr('data-command', 'power-' + (state.on ? 'off' : 'on'));
 
-        $('.temperature .digital').spinner('update', state.temp);
+      function updateTimers(state) {
+        var timerOn = $('.timer-on'),
+            timerOff = $('.timer-off');
 
-        $('.mode-' + state.mode).button('toggle');
+        if (state) {
+          timers.timerOn = (state.timerOn ? new Date(state.timerOn) : null);
+          timers.timerOff = (state.timerOff ? new Date(state.timerOff) : null);
+        }
 
-        $('.fan-' + state.fan).button('toggle');
+        timerOn.find('.info').toggleClass('hidden', !timers.timerOn);
+        timerOn.find('.label').html('Timer set for ' + formatTime(timers.timerOn));
 
-        $('.timer-on .info').toggleClass('hidden', !state.timerOn);
-        $('.timer-on .label').html('Timer set for ' + formatTime(state.timerOn));
+        timerOff.find('.info').toggleClass('hidden', !timers.timerOff);
+        timerOff.find('.label').html('Timer set for ' + formatTime(timers.timerOff));
+      }
 
-        $('.timer-off .info').toggleClass('hidden', !state.timerOff);
-        $('.timer-off .label').html('Timer set for ' + formatTime(state.timerOff));
+      $('#power')
+        .toggleClass('active', state.on)
+        .attr('data-command', 'power-' + (state.on ? 'off' : 'on'));
+
+      $('.temperature .digital').spinner('update', state.temp);
+
+      $('.mode-' + state.mode).button('toggle');
+
+      $('.fan-' + state.fan).button('toggle');
+
+      updateTimers(state);
+
+      if ((state.timerOn || state.timerOff) && timerInterval === null) {
+        timerInterval = setInterval(function() {
+          var now = (new Date).getTime();
+
+          if (timers.timerOn && now >= timers.timerOn.getTime()) {
+            timers.timerOn = null;
+          }
+
+          if (timers.timerOff && now >= timers.timerOff.getTime()) {
+            timers.timerOff = null;
+          }
+
+          if (timers.timerOn === null && timers.timerOff === null) {
+            clearInterval(timerInterval);
+          }
+
+          updateTimers();
+        }, 30 * 1000);
+      }
 
     }
 
@@ -26,7 +65,11 @@
         }
 
         var now = new Date(),
-            mins = Math.round((new Date(date).getTime() - now.getTime()) / 1000 / 60);
+            mins = Math.round((date.getTime() - now.getTime()) / 1000 / 60);
+
+        if (mins <= 0) {
+          return 'less than 1 minute from now';
+        }
 
         return mins + ' minute' + (mins === 1 ? '' : 's') + ' from now';
     }
@@ -46,6 +89,12 @@
           .done(setState)
           .done(showAlert);
     }
+
+    $.getJSON('remote').done(function(result) {
+      $(function() {
+        setState(result);
+      });
+    });
 
     $(function () {
 
@@ -105,7 +154,5 @@
       $('[data-command]').on('click', function() {
         sendCommand('remote/' + $(this).attr('data-command'));
       });
-
-      $.getJSON('remote').done(setState);
   });
 })();
