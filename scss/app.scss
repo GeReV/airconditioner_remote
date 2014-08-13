@@ -1,0 +1,142 @@
+$fa-font-path: "/fonts/";
+
+$btn-default-bg: #e6e6e6;
+
+@import "fonts";
+@import "bootstrap/bootstrap";
+@import "fontawesome/font-awesome";
+@import "weather-icons";
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.container {
+  max-width: 480px;
+  padding: 15px;
+}
+
+.alert-success.alert-hidden {
+  opacity: 0;
+}
+.alert-success {
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+.r {
+  margin: 5px auto;
+  
+  &.first {
+    display: flex;
+    flex-direction: columns;
+    justify-content: space-between;
+  }
+}
+.btn {
+  background-color: $btn-default-bg;
+  font-size: 32px;
+  line-height: 40px;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+  
+  &:hover {
+    background-color: darken($btn-default-bg, 5%);
+  }
+  
+  &:active,
+  &.active {
+    background-color: darken($btn-default-bg, 10%);
+  }
+  
+  &.btn-success {
+    background-color: $btn-success-bg;
+    
+    &:hover {
+      background-color: darken($btn-success-bg, 5%);
+    }
+    
+    &:active,
+    &.active {
+      background-color: darken($btn-success-bg, 10%);
+    }
+  }
+}
+.btn-group {
+  display: flex;
+  
+  &.btn-group-vertical,
+  &.btn-group-inline {
+    display: inline-block;
+  }
+  
+  .btn {
+    font-size: 32px;
+    flex: 1 0 60px;
+  }
+}
+
+#power {
+  line-height: 20px;
+  margin-right: 15px;
+  width: 150px;
+}
+
+.temperature {
+  display: inline-block;
+  font-size: 45px;
+  vertical-align: middle;
+}
+.temperature .digital {
+    font-size: 50px;
+    width: 60px;
+}
+.temperature .up, .temperature .down {
+  line-height: 20px;
+}
+.digital {
+  display: inline-block;
+  font-family: "7segment";
+  position: relative;
+  vertical-align: middle;
+}
+.digital:after {
+  color: #ddd;
+  content: "88";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  z-index: -1;
+}
+.deg {
+  text-shadow: 2px 2px 0 #ddd;
+  margin-left: -10px;
+  vertical-align: middle;
+}
+
+.fan-large i {
+  font-size: 130%;
+}
+.fan-medium i {
+}
+.fan-small i {
+  font-size: 70%;
+}
+
+.timer {
+  font-size: 16px;
+}
+.timer .btn {
+  line-height: 20px;
+  padding: 6px;
+}
+.timer .btn-group {
+  margin-right: 4px;
+}
+.timer .btn-group .btn {
+  font-size: 12px;
+}
+.timer .digital {
+  font-size: 30px;
+}
+.timer .btn {
+    font-size: 14px;
+}

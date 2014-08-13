@@ -11,41 +11,54 @@
         %h1 Air Conditioner Remote
       #main{ role: "main" }
         .alert.alert-success.alert-hidden Command sent.
-        .row
-          %button#power.btn{ "data-command": "power-on", "data-toggle": "button" }
+        .r.first
+          %button#power.btn.btn-success{ "data-command": "power-on", "data-toggle": "button" }
+            %i.fa.fa-power-off
           %span.temperature
             %span.digital 00
             %span.deg &deg;
-            .btn-group.btn-group-vertical
-              %button.btn.up +
-              %button.btn.down -
-        .row
+            .btn-group-vertical
+              %button.btn.up
+                %i.fa.fa-plus
+              %button.btn.down
+                %i.fa.fa-minus
+        .r
           .btn-group{ "data-toggle": "buttons-radio" }
             %button.btn.mode-freeze{ "data-command": "mode-freeze" }
+              %i.wi.wi-snowflake-cold
             %button.btn.mode-heat{ "data-command": "mode-heat" }
+              %i.wi.wi-day-sunny
             %button.btn.mode-fan{ "data-command": "mode-fan" }
-        .row
+              %i.wi.wi-hurricane
+        .r
           .btn-group{ "data-toggle": "buttons-radio" }
             %button.btn.fan-small{ "data-command": "fan-small" }
+              %i.wi.wi-hurricane
             %button.btn.fan-medium{ "data-command": "fan-medium" }
+              %i.wi.wi-hurricane
             %button.btn.fan-large{ "data-command": "fan-large" }
-        .row.timer.timer-on
+              %i.wi.wi-hurricane
+        .r.timer.timer-on
           On in
           %span.digital 00
-          .btn-group
-            %button.btn.up +
-            %button.btn.down -
+          .btn-group.btn-group-inline
+            %button.btn.up
+              %i.fa.fa-plus
+            %button.btn.down
+              %i.fa.fa-minus
           minutes
           %button.btn.btn-small.timer-set Set
           %span.info.hidden
             %button.btn.btn-small.timer-clear Clear
             %span.label.label-info
-        .row.timer.timer-off
+        .r.timer.timer-off
           Off in
           %span.digital 00
-          .btn-group
-            %button.btn.up +
-            %button.btn.down -
+          .btn-group.btn-group-inline
+            %button.btn.up
+              %i.fa.fa-plus
+            %button.btn.down
+              %i.fa.fa-minus
           minutes
           %button.btn.btn-small.timer-set Set
           %span.info.hidden
@@ -54,6 +67,5 @@
     %script{ src: "javascripts/jquery.js" }
     %script{ src: "javascripts/jquery.throttle-debounce.js" }
     %script{ src: "javascripts/fastbutton.js" }
-    %script{ src: "javascripts/bootstrap.js" }
     %script{ src: "javascripts/spinner.js" }
     %script{ src: "javascripts/app.js" }
