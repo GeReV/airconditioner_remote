@@ -7,6 +7,8 @@ $btn-default-bg: #e6e6e6;
 @import "fontawesome/font-awesome";
 @import "weather-icons";
 
+@import "svg";
+
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -139,4 +141,8 @@ body {
 }
 .timer .btn {
     font-size: 14px;
+}
+
+.temperature-plot h2 {
+  font-size: 18px;
 }

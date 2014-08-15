@@ -1,0 +1,18 @@
+svg {
+  font: 10px "Lucida Grande", Helvetica, Arial, sans-serif; 
+}
+
+.axis {
+  line, path {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+  }
+}
+
+.line {
+  fill: none;
+  stroke: #428bca;
+  stroke-width: 1.5px;
+}

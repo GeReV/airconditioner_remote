@@ -1,0 +1,75 @@
+!(function() {
+  'use strict';
+  
+  var path    = require('path'),
+      fs      = require('fs'),
+      moment  = require('moment');
+      
+  var basePath = '/sys/bus/w1/devices';
+  
+  //var file = glob.sync(path.join(basePath, '28*', 'w1_slave'));
+
+  var file = path.join(basePath, '28-0000058f0ac5', 'w1_slave');
+  
+  var application, authentication;
+  
+  var temperatures = [];
+  
+  function read()  {
+    /*var contents = fs.readFileSync(file, {
+            encoding: 'utf8'
+        }),
+        lines = contents.split(/\r?\n/);
+
+    if (lines.length < 2) {
+        setTimeout(read, 200);
+        return;
+    }
+
+    if (lines[0].slice(-3).toUpperCase() != 'YES') {
+        setTimeout(read, 200);
+        return;
+    }
+
+    var temperature = lines[1].match(/t=([0-9]+)$/)[1];*/
+   
+
+    //temperature = +(temperature) / 1000;
+    
+    var temperature = Math.random() * 20 + 15;
+
+    var now = moment();
+    
+    while (temperatures.length && now.diff(temperatures[0].d, 'hours', true) > 1) {
+      // Throw away samples from more than 1 hour ago.
+      temperatures.shift();
+    }
+
+    temperatures.push({
+        d: now, 
+        t: temperature
+      });
+    
+    setTimeout(read, 5000);
+  }
+  
+  function init(app, auth) {
+    application = app;
+    authentication = auth;
+    
+    app.get('/temperature', auth, function(req, res) {
+      res.json(temperatures.map(function(v) {
+        return { 
+          d: +v.d,
+          t: v.t
+        };
+      }));
+    });
+    
+    read();
+  }
+  
+  module.exports = {
+    init: init
+  };
+})();

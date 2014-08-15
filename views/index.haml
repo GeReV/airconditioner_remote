@@ -64,6 +64,11 @@
           %span.info.hidden
             %button.btn.btn-small.timer-clear Clear
             %span.label.label-info
+        - if (temperature)
+          .r.temperature-plot
+            %h2 Room Temperature
+          %script{ src: "javascripts/d3.js" }
+          %script{ src: "javascripts/temperature-plot.js" }
     %script{ src: "javascripts/jquery.js" }
     %script{ src: "javascripts/jquery.throttle-debounce.js" }
     %script{ src: "javascripts/fastbutton.js" }

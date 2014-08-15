@@ -5,11 +5,11 @@
 
 var express = require('express'),
     engines = require('consolidate'),
-    routes = require('./routes'),
     http = require('http'),
     path = require('path'),
     lirc = require('lirc_node'),
-    CronJob = require('cron').CronJob;
+    CronJob = require('cron').CronJob,
+    Temperature = require('./temperature');
 
 var app = express();
 
@@ -82,7 +82,9 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', auth, routes.index);
+app.get('/', auth, function(req, res) {
+  res.render('index', { title: 'Air Condition Remote', temperature: true });
+});
 
 app.get('/remote', auth, function(req, res) {
   res.json(state);
@@ -137,6 +139,8 @@ app.post('/remote/:command', auth, function(req, res) {
 });
 
 lirc.init();
+
+Temperature.init(app, auth);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
