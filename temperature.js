@@ -3,17 +3,17 @@
   
   var path    = require('path'),
       fs      = require('fs'),
+      glob    = require('glob'),
       moment  = require('moment');
       
   var basePath = '/sys/bus/w1/devices';
   
-  //var file = glob.sync(path.join(basePath, '28*', 'w1_slave'));
-
-  var file = path.join(basePath, '28-0000058f0ac5', 'w1_slave');
+  var file = glob.sync(path.join(basePath, '28*', 'w1_slave'))[0];
   
   var application, authentication;
   
-  var temperatures = [];
+  var available = !!(file),
+      temperatures = [];
   
   function read()  {
     var contents = fs.readFileSync(file, {
@@ -55,6 +55,10 @@
     application = app;
     authentication = auth;
     
+    if (!available) {
+      return;
+    }
+    
     app.get('/temperature', auth, function(req, res) {
       res.json(temperatures.map(function(v) {
         return { 
@@ -84,6 +88,7 @@
   }
   
   module.exports = {
-    init: init
+    init: init,
+    available: available
   };
 })();

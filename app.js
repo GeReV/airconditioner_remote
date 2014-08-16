@@ -83,7 +83,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', auth, function(req, res) {
-  res.render('index', { title: 'Air Condition Remote', temperature: true });
+  res.render('index', { title: 'Air Condition Remote', temperature: Temperature.available });
 });
 
 app.get('/remote', auth, function(req, res) {

@@ -44,7 +44,7 @@
         
     var yaxis = svg.append("g")
         .attr("class", "y axis")
-        .call(d3.svg.axis().scale(y).ticks(5).orient("left"));
+        .call(d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return d + '\u00B0' + 'C'; }).orient("left"));
     
     var path = svg.append("g")
         .attr("clip-path", "url(#clip)")
