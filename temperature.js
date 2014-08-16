@@ -16,7 +16,7 @@
   var temperatures = [];
   
   function read()  {
-    /*var contents = fs.readFileSync(file, {
+    var contents = fs.readFileSync(file, {
             encoding: 'utf8'
         }),
         lines = contents.split(/\r?\n/);
@@ -31,13 +31,11 @@
         return;
     }
 
-    var temperature = lines[1].match(/t=([0-9]+)$/)[1];*/
+    var temperature = lines[1].match(/t=([0-9]+)$/)[1];
    
 
-    //temperature = +(temperature) / 1000;
+    temperature = +(temperature) / 1000;
     
-    var temperature = Math.random() * 20 + 15;
-
     var now = moment();
     
     while (temperatures.length && now.diff(temperatures[0].d, 'hours', true) > 1) {
