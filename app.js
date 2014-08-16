@@ -5,11 +5,11 @@
 
 var express = require('express'),
     engines = require('consolidate'),
-    routes = require('./routes'),
     http = require('http'),
     path = require('path'),
     lirc = require('lirc_node'),
-    CronJob = require('cron').CronJob;
+    CronJob = require('cron').CronJob,
+    Temperature = require('./temperature');
 
 var app = express();
 
@@ -82,7 +82,9 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', auth, routes.index);
+app.get('/', auth, function(req, res) {
+  res.render('index', { title: 'Air Condition Remote', temperature: Temperature.available });
+});
 
 app.get('/remote', auth, function(req, res) {
   res.json(state);
@@ -102,7 +104,9 @@ app.post('/remote/timer/:state/clear', auth, function (req, res) {
 });
 
 app.post('/remote/timer/:state', auth, function (req, res) {
-    var duration, stateAttr, date = new Date;
+    var duration, 
+        stateAttr, 
+        date = new Date();
 
     duration = parseInt(req.body.time, 10);
 
@@ -112,7 +116,9 @@ app.post('/remote/timer/:state', auth, function (req, res) {
 
     if (/^(on|off)$/.test(req.params.state) && duration > 0) {
 
-        timers[stateAttr] && timers[stateAttr].stop();
+        if (timers[stateAttr]) {
+          timers[stateAttr].stop();
+        } 
 
         timers[stateAttr] = new CronJob(date, function () {
             sendCommand('power-' + req.params.state);
@@ -137,6 +143,8 @@ app.post('/remote/:command', auth, function(req, res) {
 });
 
 lirc.init();
+
+Temperature.init(app, auth);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

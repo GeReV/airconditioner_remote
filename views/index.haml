@@ -23,20 +23,26 @@
               %button.btn.down
                 %i.fa.fa-minus
         .r
-          .btn-group{ "data-toggle": "buttons-radio" }
-            %button.btn.mode-freeze{ "data-command": "mode-freeze" }
+          .btn-group{ "data-toggle": "buttons" }
+            %label.btn.active.mode-freeze{ "data-command": "mode-freeze" }
+              %input{ "type": "radio", "name": "fan", "id": "mode-freeze"}
               %i.wi.wi-snowflake-cold
-            %button.btn.mode-heat{ "data-command": "mode-heat" }
+            %label.btn.mode-heat{ "data-command": "mode-heat" }
+              %input{ "type": "radio", "name": "fan", "id": "mode-heat"}
               %i.wi.wi-day-sunny
-            %button.btn.mode-fan{ "data-command": "mode-fan" }
+            %label.btn.mode-fan{ "data-command": "mode-fan" }
+              %input{ "type": "radio", "name": "fan", "id": "mode-fan"}
               %i.wi.wi-hurricane
         .r
-          .btn-group{ "data-toggle": "buttons-radio" }
-            %button.btn.fan-small{ "data-command": "fan-small" }
+          .btn-group{ "data-toggle": "buttons" }
+            %label.btn.active.fan-small{ "data-command": "fan-small" }
+              %input{ "type": "radio", "name": "fan", "id": "fan-small"}
               %i.wi.wi-hurricane
-            %button.btn.fan-medium{ "data-command": "fan-medium" }
+            %label.btn.fan-medium{ "data-command": "fan-medium" }
+              %input{ "type": "radio", "name": "fan", "id": "fan-medium"}
               %i.wi.wi-hurricane
-            %button.btn.fan-large{ "data-command": "fan-large" }
+            %label.btn.fan-large{ "data-command": "fan-large" }
+              %input{ "type": "radio", "name": "fan", "id": "fan-large"}
               %i.wi.wi-hurricane
         .r.timer.timer-on
           On in
@@ -64,8 +70,14 @@
           %span.info.hidden
             %button.btn.btn-small.timer-clear Clear
             %span.label.label-info
+        - if (temperature)
+          .r.temperature-plot
+            %h2 Room Temperature
+          %script{ src: "javascripts/d3.js" }
+          %script{ src: "javascripts/temperature-plot.js" }
     %script{ src: "javascripts/jquery.js" }
     %script{ src: "javascripts/jquery.throttle-debounce.js" }
+    %script{ src: "javascripts/bootstrap-button.js" }
     %script{ src: "javascripts/fastbutton.js" }
     %script{ src: "javascripts/spinner.js" }
     %script{ src: "javascripts/app.js" }
