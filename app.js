@@ -104,7 +104,9 @@ app.post('/remote/timer/:state/clear', auth, function (req, res) {
 });
 
 app.post('/remote/timer/:state', auth, function (req, res) {
-    var duration, stateAttr, date = new Date;
+    var duration, 
+        stateAttr, 
+        date = new Date();
 
     duration = parseInt(req.body.time, 10);
 
@@ -114,7 +116,9 @@ app.post('/remote/timer/:state', auth, function (req, res) {
 
     if (/^(on|off)$/.test(req.params.state) && duration > 0) {
 
-        timers[stateAttr] && timers[stateAttr].stop();
+        if (timers[stateAttr]) {
+          timers[stateAttr].stop();
+        } 
 
         timers[stateAttr] = new CronJob(date, function () {
             sendCommand('power-' + req.params.state);

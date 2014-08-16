@@ -67,7 +67,17 @@
     
         // update the domains
         now = Date.now();
-        x.domain([now - duration - offset, now - offset]);
+        
+        x.domain([
+            now - duration - offset, 
+            now - offset
+          ]);
+          
+        y.domain([
+            d3.min(data, function(d) { return d.t; }),
+            d3.max(data, function(d) { return d.t; })
+          ])
+          .nice();
       
         // redraw the line
         svg.select(".line")
@@ -89,14 +99,10 @@
             .ease("linear")
             .call(x.axis);
             
-        yaxis.domain([
-            d3.min(data, function(d) { return d.t; }),
-            d3.max(data, function(d) { return d.t; })
-          ])
-          .nice()
-          .duration(offset)
-          .ease("linear")
-          .call(y.axis);
+        yaxis.transition()
+            .duration(offset)
+            .ease("linear")
+            .call(y.axis);
     
       });
     }
