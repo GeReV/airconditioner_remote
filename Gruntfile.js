@@ -14,7 +14,7 @@ module.exports = function(grunt) {
         src: 'Gruntfile.js'
       },
       index: {
-        src: 'index.js'
+        src: 'app.js'
       }
     },
     uglify: {
