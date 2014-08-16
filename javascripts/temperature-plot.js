@@ -44,7 +44,7 @@
         
     var yaxis = svg.append("g")
         .attr("class", "y axis")
-        .call(d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return d + '\u00B0' + 'C'; }).orient("left"));
+        .call(y.axis = d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return d + '\u00B0' + 'C'; }).orient("left"));
     
     var path = svg.append("g")
         .attr("clip-path", "url(#clip)")
@@ -69,19 +69,10 @@
         now = Date.now();
         x.domain([now - duration - offset, now - offset]);
       
-        // push the accumulated count onto the back, and reset the count
-        // data.push(Math.min(30, count));
-      
         // redraw the line
         svg.select(".line")
             .attr("d", line)
             .attr("transform", null);
-      
-        // slide the x-axis left
-        xaxis.transition()
-            .duration(offset)
-            .ease("linear")
-            .call(x.axis);
       
         // slide the line left
         path
@@ -91,6 +82,21 @@
             .ease("linear")
             .attr("transform", "translate(" + x(now - duration - offset) + ")")
             .each("end", tick);
+            
+        // slide the x-axis left
+        xaxis.transition()
+            .duration(offset)
+            .ease("linear")
+            .call(x.axis);
+            
+        yaxis.domain([
+            d3.min(data, function(d) { return d.t; }),
+            d3.max(data, function(d) { return d.t; })
+          ])
+          .nice()
+          .duration(offset)
+          .ease("linear")
+          .call(y.axis);
     
       });
     }
