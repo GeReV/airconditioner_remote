@@ -66,6 +66,22 @@
       }));
     });
     
+    app.get('/temperature/:timestamp', auth, function(req, res) {
+      var result = [],
+          timestamp = +req.params.timestamp;
+      
+      for (var i = temperatures.length - 1; i >= 0 && timestamp <= +(temperatures[i].d); i--) {
+        result.unshift(temperatures[i]);
+      }
+      
+      res.json(result.map(function(v) {
+        return {
+          d: +v.d,
+          t: v.t
+        };
+      }));
+    });
+    
     read();
   }
   
