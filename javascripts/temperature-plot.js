@@ -74,8 +74,8 @@
           ]);
           
         y.domain([
-            d3.min(data, function(d) { return d.t; }),
-            d3.max(data, function(d) { return d.t; })
+            Math.min(20, d3.min(data, function(d) { return d.t; })),
+            Math.max(30, d3.max(data, function(d) { return d.t; }))
           ])
           .nice();
       
