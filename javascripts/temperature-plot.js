@@ -51,7 +51,7 @@
         
     var yaxis = svg.append("g")
         .attr("class", "y axis")
-        .call(y.axis = d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return degress(d); }).orient("left"));
+        .call(y.axis = d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return degrees(d); }).orient("left"));
     
     var path = svg.append("g")
         .attr("clip-path", "url(#clip)")
