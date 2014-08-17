@@ -48,7 +48,7 @@
     var xaxis = svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
-        .call(x.axis = d3.svg.axis().scale(x).ticks(6).tickFormat(d3.time.format('%H:%M')).orient("bottom"));
+        .call(x.axis = d3.svg.axis().scale(x).ticks(d3.time.minute, 10).tickFormat(d3.time.format('%H:%M')).orient("bottom"));
         
     var yaxis = svg.append("g")
         .attr("class", "y axis")
