@@ -16,7 +16,7 @@
           return s + '\u00B0' + 'C';
         };
   
-    var margin = {top: 6, right: 100, bottom: 20, left: 40},
+    var margin = {top: 6, right: 90, bottom: 20, left: 40},
         width = container.width() - margin.right,
         height = 120 - margin.top - margin.bottom;
     
@@ -34,9 +34,8 @@
         .y(function(d, i) { return y(d.t); });
     
     var svg = d3.select(container.get(0)).append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .style("margin-left", -margin.left + "px")
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
