@@ -17,7 +17,7 @@
         };
   
     var margin = {top: 6, right: 90, bottom: 20, left: 40},
-        width = container.width() - margin.right,
+        width = container.width() - margin.right - margin.left,
         height = 120 - margin.top - margin.bottom;
     
     var x = d3.time.scale()
@@ -34,7 +34,7 @@
         .y(function(d, i) { return y(d.t); });
     
     var svg = d3.select(container.get(0)).append("svg")
-        .attr("width", width + margin.right)
+        .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");

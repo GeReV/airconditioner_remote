@@ -33,7 +33,6 @@
 
     var temperature = lines[1].match(/t=([0-9]+)$/)[1];
    
-
     temperature = +(temperature) / 1000;
     
     var now = moment();
