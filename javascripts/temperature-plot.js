@@ -2,12 +2,19 @@
   'use strict';
   
   d3.json('/temperature', function(error, data) {
+    
+    if (error) {
+      return;
+    }
   
     var duration = 60 * 60 * 1000,
         now = Date.now(),
-        offset = 2500;
+        offset = 2500,
+        degrees = function(s) {
+          return s + '\u00B0' + 'C';
+        };
   
-    var margin = {top: 6, right: 0, bottom: 20, left: 40},
+    var margin = {top: 6, right: 100, bottom: 20, left: 40},
         width = 450 - margin.right,
         height = 120 - margin.top - margin.bottom;
     
@@ -44,13 +51,24 @@
         
     var yaxis = svg.append("g")
         .attr("class", "y axis")
-        .call(y.axis = d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return d + '\u00B0' + 'C'; }).orient("left"));
+        .call(y.axis = d3.svg.axis().scale(y).ticks(5).tickFormat(function(d) { return degress(d); }).orient("left"));
     
     var path = svg.append("g")
         .attr("clip-path", "url(#clip)")
       .append("path")
         .data([data])
         .attr("class", "line");
+        
+    var format = d3.format('.1f'),
+        spacer = margin.top,
+        ticker = svg.append("g")
+          .attr("transform", "translate(" + (width + spacer) + ", " + margin.top + ")")
+        .append("text")
+          .attr('class', 'temperature')
+          .attr('y', height / 2)
+          .attr('dy', '0.35em')
+          .datum(data[data.length - 1])
+          .text(function(d) { return degrees(format(d.t)); });
     
     tick();
     
@@ -67,6 +85,21 @@
     
         // update the domains
         now = Date.now();
+        
+        var latest = data[data.length - 1],
+            previous = ticker.datum();
+        
+        ticker
+          .datum(latest)
+          .transition()
+          .duration(1000)
+            .tween('text', function(d) {
+              var i = d3.interpolateNumber(previous.t, d.t);
+              
+              return function(t) {
+                this.textContent = degrees(format(i(t)));
+              };
+            });
         
         x.domain([
             now - duration - offset, 
