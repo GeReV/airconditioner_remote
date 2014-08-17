@@ -33,7 +33,7 @@
         .x(function(d, i) { return x(d.d); })
         .y(function(d, i) { return y(d.t); });
     
-    var svg = d3.select(container).append("svg")
+    var svg = d3.select(container.get(0)).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .style("margin-left", -margin.left + "px")
