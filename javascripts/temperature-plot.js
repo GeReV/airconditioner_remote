@@ -1,4 +1,4 @@
-!(function(d3) {
+!(function($, d3) {
   'use strict';
   
   d3.json('/temperature', function(error, data) {
@@ -6,6 +6,8 @@
     if (error) {
       return;
     }
+    
+    var container = $('.temperature-plot');
   
     var duration = 60 * 60 * 1000,
         now = Date.now(),
@@ -15,7 +17,7 @@
         };
   
     var margin = {top: 6, right: 100, bottom: 20, left: 40},
-        width = 450 - margin.right,
+        width = container.width() - margin.right,
         height = 120 - margin.top - margin.bottom;
     
     var x = d3.time.scale()
@@ -31,7 +33,7 @@
         .x(function(d, i) { return x(d.d); })
         .y(function(d, i) { return y(d.t); });
     
-    var svg = d3.select(document.querySelector('.temperature-plot')).append("svg")
+    var svg = d3.select(container).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .style("margin-left", -margin.left + "px")
@@ -142,4 +144,4 @@
   
   });
   
-})(d3);
+})(window.jQuery, window.d3);

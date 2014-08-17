@@ -73,11 +73,13 @@
         - if (temperature)
           .r.temperature-plot
             %h2 Room Temperature
-          %script{ src: "javascripts/d3.js" }
-          %script{ src: "javascripts/temperature-plot.js" }
+          
     %script{ src: "javascripts/jquery.js" }
     %script{ src: "javascripts/jquery.throttle-debounce.js" }
     %script{ src: "javascripts/bootstrap-button.js" }
     %script{ src: "javascripts/fastbutton.js" }
     %script{ src: "javascripts/spinner.js" }
     %script{ src: "javascripts/app.js" }
+    - if (temperature)
+      %script{ src: "javascripts/d3.js" }
+      %script{ src: "javascripts/temperature-plot.js" }
