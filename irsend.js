@@ -32,7 +32,7 @@ function reverseBits(byte) {
 
 function build(buffer, opts) {
   const bufferBitCount = buffer.length * 8;
-  const messageLength = bufferBitCount * 2 + 1;
+  const messageLength = bufferBitCount * 2;
   const message = new Array(messageLength);
 
   buffer.forEach((byte, i) => {
