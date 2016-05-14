@@ -83,12 +83,12 @@ function bitbang(timing) {
       // Turn off.
       state = false;
 
-      gpio.write(outputPin, 0);
+      gpio.write(outputPin, false);
     } else if (!odd && !state) {
       // Turn on.
       state = true;
 
-      gpio.write(outputPin, 1);
+      gpio.write(outputPin, true);
     }
 
     const currentTick = nanoseconds(process.hrtime());
@@ -99,10 +99,9 @@ function bitbang(timing) {
     process.nextTick(tick);
   }
 
-  gpio.setup(outputPin, gpio.DIR_OUT, function(err) {
+  gpio.setup(outputPin, err => {
     if (err) {
       console.error(err);
-      return;
     }
 
     process.nextTick(tick);

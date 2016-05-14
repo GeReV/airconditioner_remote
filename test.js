@@ -13,9 +13,9 @@ const state = {
 };
 
 const irOpts = {
-  durationOne: 1700,
-  durationZero: 450,
-  durationSeparator: 400,
+  durationOne: 1750,
+  durationZero: 600,
+  durationSeparator: 600,
   intro: [9000, 4500]
 };
 
