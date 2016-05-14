@@ -32,25 +32,23 @@ function reverseBits(byte) {
 
 function build(buffer, opts) {
   const bufferBitCount = buffer.length * 8;
-  const messageLength = bufferBitCount * 2 - 1;
+  const messageLength = bufferBitCount * 2 + 1;
   const message = new Array(messageLength);
 
   buffer.forEach((byte, i) => {
     for (let bit = 0; bit < 8; bit++) {
       const index = i * 16 + bit * 2;
 
-      message[index] = (byte & 1) ? opts.durationOne : opts.durationZero;
-      message[index] *= 1e3; // Convert to nanoseconds;
+      message[index] = opts.durationSeparator * 1e3; // Convert to nanoseconds.
 
-      if (index + 1 < messageLength) {
-        message[index + 1] = opts.durationSeparator * 1e3; // Convert to nanoseconds.
-      }
+      message[index + 1] = (byte & 1) ? opts.durationOne : opts.durationZero;
+      message[index + 1] *= 1e3; // Convert to nanoseconds;
 
       byte >>>= 1;
     }
   });
 
-  return (opts.intro || []).concat(message);
+  return (opts.intro || []).concat(message).concat([opts.durationSeparator]);
 }
 
 function nanoseconds(hrtime) {
