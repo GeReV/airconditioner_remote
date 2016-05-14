@@ -7,17 +7,20 @@ var express = require('express'),
     engines = require('consolidate'),
     http = require('http'),
     path = require('path'),
-    lirc = require('lirc_node'),
     CronJob = require('cron').CronJob,
     Temperature = require('./temperature');
+
+const electra = require('./electra_ir');
 
 var app = express();
 
 var state = {
-  on: false,
+  power: false,
   temp: 25,
-  mode: 'freeze',
-  fan: 'small',
+  mode: electra.MODES.cold,
+  fan: electra.FAN.low,
+  swingh: true,
+  swingv: true,
   timerOn: null,
   timerOff: null
 };
@@ -34,7 +37,7 @@ var setState = function(command) {
       fan = /^fan-(small|medium|large)$/i;
 
   if (power.test(command)) {
-    state.on = (power.exec(command)[1] == 'on');
+    state.on = power.exec(command)[1] === 'on';
   }
 
   if (temp.test(command)) {
@@ -50,10 +53,12 @@ var setState = function(command) {
   }
 };
 
-var sendCommand = function (command, cb) {
+const sendCommand = (command, cb) => {
     setState(command);
 
-    lirc.irsend.send_once('airconditioner', command.toUpperCase(), cb);
+    electra.build(state)
+      .catch(err => console.error(err))
+      .then(message => console.log(message));
 };
 
 var capitalize = function (s) {
@@ -78,7 +83,7 @@ var auth = express.basicAuth('amir', 'coolmedown');
 app.use(auth);
 
 // development only
-if ('development' == app.get('env')) {
+if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 
@@ -104,8 +109,8 @@ app.post('/remote/timer/:state/clear', auth, function (req, res) {
 });
 
 app.post('/remote/timer/:state', auth, function (req, res) {
-    var duration, 
-        stateAttr, 
+    var duration,
+        stateAttr,
         date = new Date();
 
     duration = parseInt(req.body.time, 10);
@@ -118,7 +123,7 @@ app.post('/remote/timer/:state', auth, function (req, res) {
 
         if (timers[stateAttr]) {
           timers[stateAttr].stop();
-        } 
+        }
 
         timers[stateAttr] = new CronJob(date, function () {
             sendCommand('power-' + req.params.state);
@@ -141,8 +146,6 @@ app.post('/remote/:command', auth, function(req, res) {
       res.json(state);
   });
 });
-
-lirc.init();
 
 Temperature.init(app, auth);
 
