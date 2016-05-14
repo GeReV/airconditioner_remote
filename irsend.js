@@ -1,6 +1,8 @@
 const yup = require('yup');
 const gpio = require('pi-gpio');
 
+const outputPin = 16;
+
 const optsSchema = yup.object()
   .shape({
     intro: yup.array()
@@ -65,7 +67,7 @@ function bitbang(timing) {
 
   function tick() {
     if (i >= l) {
-      gpio.close(22);
+      gpio.close(outputPin);
       return;
     }
 
@@ -81,12 +83,12 @@ function bitbang(timing) {
       // Turn off.
       state = false;
 
-      gpio.write(22, 0);
+      gpio.write(outputPin, 0);
     } else if (!odd && !state) {
       // Turn on.
       state = true;
 
-      gpio.write(22, 1);
+      gpio.write(outputPin, 1);
     }
 
     const currentTick = nanoseconds(process.hrtime());
@@ -97,7 +99,7 @@ function bitbang(timing) {
     process.nextTick(tick);
   }
 
-  gpio.open(22, function(err) {
+  gpio.open(outputPin, function(err) {
     if (err) {
       console.error(err);
       return;
