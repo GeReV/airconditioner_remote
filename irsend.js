@@ -67,7 +67,6 @@ function bitbang(timing) {
 
   function tick() {
     if (i >= l) {
-      gpio.destroy();
       return;
     }
 
