@@ -1,7 +1,9 @@
 const yup = require('yup');
-const gpio = require('rpi-gpio');
+const wpi = require('wiring-pi');
 
-const outputPin = 16;
+wpi.setup('wpi');
+
+const outputPin = 0;
 
 const optsSchema = yup.object()
   .shape({
@@ -81,12 +83,12 @@ function bitbang(timing) {
       // Turn off.
       state = false;
 
-      gpio.write(outputPin, false);
+      wpi.digitalWrite(outputPin, 0);
     } else if (!odd && !state) {
       // Turn on.
       state = true;
 
-      gpio.write(outputPin, true);
+      wpi.digitalWrite(outputPin, 1);
     }
 
     const currentTick = nanoseconds(process.hrtime());
@@ -97,13 +99,9 @@ function bitbang(timing) {
     process.nextTick(tick);
   }
 
-  gpio.setup(outputPin, err => {
-    if (err) {
-      console.error(err);
-    }
+  wpi.pinMode(outputPin, wpi.OUTPUT);
 
-    process.nextTick(tick);
-  });
+  process.nextTick(tick);
 }
 
 module.exports = function(buffer, opts) {
