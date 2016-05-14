@@ -1,5 +1,5 @@
 const yup = require('yup');
-const gpio = require('pi-gpio');
+const gpio = require('rpi-gpio');
 
 const outputPin = 16;
 
@@ -67,7 +67,7 @@ function bitbang(timing) {
 
   function tick() {
     if (i >= l) {
-      gpio.close(outputPin);
+      gpio.destroy();
       return;
     }
 
@@ -99,7 +99,7 @@ function bitbang(timing) {
     process.nextTick(tick);
   }
 
-  gpio.open(outputPin, function(err) {
+  gpio.setup(outputPin, gpio.DIR_OUT, function(err) {
     if (err) {
       console.error(err);
       return;
