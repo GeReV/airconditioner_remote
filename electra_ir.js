@@ -63,19 +63,19 @@ function build(opts){
     .then(opts => {
       const message = new Uint8Array(13);
 
-      const tempHigh = (opts.temp >>> 3) - 1;
+      const tempHigh = (opts.temp >>> 8) - 1;
       const tempLow = opts.temp % 8;
-      const swingv = opts.swingv ? 0x7 : 0x0;
-      const swingh = opts.swingh ? 0x7 : 0x0;
+      const swingv = opts.swingv ? 0x0 : 0x7;
+      const swingh = opts.swingh ? 0x0 : 0x7;
       const now = new Date();
 
       message[0] = HEAD;
       message[1] = tempHigh << 7 | tempLow << 3 | swingv;
       message[2] = swingh << 6 | (now.getHours());
       message[3] = now.getMinutes();
-      message[4] = fanValues[opts.fan] << 6;
+      message[4] = fanValues[opts.fan] << 5;
       message[5] = 0x00;
-      message[6] = modeValues[opts.mode] << 6;
+      message[6] = modeValues[opts.mode] << 5;
       message[7] = 0x00;
       message[8] = 0x00;
       message[9] = opts.power ? 0x20 : 0x00;

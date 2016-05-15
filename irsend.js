@@ -22,11 +22,14 @@ const optsSchema = yup.object()
 
 function reverseBits(byte) {
   let b = 0;
+  let shift = 0;
 
-  while (byte !== 0){
+  while (shift < 8){
     b <<= 1;
     b |= (byte & 1);
     byte >>>= 1;
+
+    shift++;
   }
 
   return b;
@@ -50,7 +53,8 @@ function build(buffer, opts) {
     }
   });
 
-  return (opts.intro || []).concat(message).concat([opts.durationSeparator]);
+  const intro = (opts.intro || []).map(b => b * 1e3);
+  return intro.concat(message).concat([opts.durationSeparator * 1e3]);
 }
 
 function nanoseconds(hrtime) {
