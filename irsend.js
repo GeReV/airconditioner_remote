@@ -1,5 +1,6 @@
 const yup = require('yup');
 const wpi = require('wiring-pi');
+const exec = require('child_process').exec;
 
 wpi.setup('wpi');
 
@@ -107,10 +108,16 @@ function bitbang(timing) {
   process.nextTick(tick);
 }
 
+function send(timing) {
+  exec(`sudo ./send ${timing.join(' ')}`, (error, stdout, stderr) => {
+
+  });
+}
+
 module.exports = function(buffer, opts) {
   const reversed = buffer.map(reverseBits);
 
   return optsSchema.validate(opts)
     .then(opts => build(reversed, opts))
-    .then(bitbang);
+    .then(send);
 };

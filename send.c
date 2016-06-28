@@ -43,28 +43,34 @@
 
 unsigned long sigTime = 0; //use in mark & space functions to keep track of time
 
-int main (int argc, char *argv[])
-{
-  int count = argc - 1;
-  int *numbers = (int*)malloc(count * sizeof(int));
-
-  for (int i = 1; i < argc; i++) {
-    numbers[i - 1] = atoi(argv[i]);
-  }
-
-  initializeGpio();
-  runSequence(numbers, count)
-
-  free(numbers);
-
-  return 0;
-}
 
 void setup() {
   wiringPiSetup();
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
 }
+
+void mark(unsigned int mLen) { //uses sigTime as end parameter
+  sigTime += mLen; //mark ends at new sigTime
+  unsigned long now = micros();
+  unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
+  if (dur == 0) return;
+  while ((micros() - now) < dur) { //just wait here until time is up
+    digitalWrite(LED, HIGH);
+    delayMicroseconds(HIGHTIME - 5);
+    digitalWrite(LED, LOW);
+    delayMicroseconds(LOWTIME - 6);
+  }
+}
+
+void space(unsigned int sLen) { //uses sigTime as end parameter
+  sigTime += sLen; //space ends at new sigTime
+  unsigned long now = micros();
+  unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
+  if (dur == 0) return;
+  while ((micros() - now) < dur) ; //just wait here until time is up
+}
+
 
 void runSequence(int *numbers) {
   sigTime = micros(); //keeps rolling track of signal time to avoid impact of loop & code execution delays
@@ -79,23 +85,21 @@ void runSequence(int *numbers) {
   }
 }
 
-void mark(unsigned int mLen) { //uses sigTime as end parameter
-  sigTime += mLen; //mark ends at new sigTime
-  unsigned long now = micros();
-  unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
-  if (dur == 0) return;
-  while ((micros() - now) < dur) { //just wait here until time is up
-    digitalWrite(txPinIR, HIGH);
-    delayMicroseconds(HIGHTIME - 5);
-    digitalWrite(txPinIR, LOW);
-    delayMicroseconds(LOWTIME - 6);
+
+int main (int argc, char *argv[])
+{
+  int count = argc - 1;
+  int *numbers = (int*)malloc(count * sizeof(int));
+
+  for (int i = 1; i < argc; i++) {
+    numbers[i - 1] = atoi(argv[i]);
   }
+
+  setup();
+  runSequence(numbers);
+
+  free(numbers);
+
+  return 0;
 }
 
-void space(unsigned int sLen) { //uses sigTime as end parameter
-  sigTime += sLen; //space ends at new sigTime
-  unsigned long now = micros();
-  unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
-  if (dur == 0) return;
-  while ((micros() - now) < dur) ; //just wait here until time is up
-}
