@@ -2,8 +2,6 @@ const yup = require('yup');
 const wpi = require('wiring-pi');
 const exec = require('child_process').exec;
 
-wpi.setup('wpi');
-
 const outputPin = 0;
 
 const optsSchema = yup.object()
@@ -45,17 +43,16 @@ function build(buffer, opts) {
     for (let bit = 0; bit < 8; bit++) {
       const index = i * 16 + bit * 2;
 
-      message[index] = opts.durationSeparator * 1e3; // Convert to nanoseconds.
+      message[index] = opts.durationSeparator; // Convert to nanoseconds.
 
       message[index + 1] = (byte & 1) ? opts.durationOne : opts.durationZero;
-      message[index + 1] *= 1e3; // Convert to nanoseconds;
 
       byte >>>= 1;
     }
   });
 
-  const intro = (opts.intro || []).map(b => b * 1e3);
-  return intro.concat(message).concat([opts.durationSeparator * 1e3]);
+  const intro = (opts.intro || []);
+  return intro.concat(message).concat([opts.durationSeparator]);
 }
 
 function nanoseconds(hrtime) {
@@ -109,8 +106,13 @@ function bitbang(timing) {
 }
 
 function send(timing) {
-  exec(`sudo ./send ${timing.join(' ')}`, (error, stdout, stderr) => {
-
+  console.log(`Sending...`);
+  console.log(timing.join(' '));
+  exec(`./send ${timing.join(' ')}`, (error, stdout, stderr) => {
+    console.log(stdout);
+    if (error) {
+      console.error(stderr);
+    }
   });
 }
 
