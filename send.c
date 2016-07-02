@@ -29,20 +29,7 @@
 
 #define LED 17
 
-#define Duty_Cycle 56  //in percent (10->50), usually 33 or 50
-//TIP for true 50% use a value of 56, because of rounding errors
-//TIP for true 40% use a value of 48, because of rounding errors
-//TIP for true 33% use a value of 40, because of rounding errors
-
-#define Carrier_Frequency 38000   //usually one of 38000, 40000, 36000, 56000, 33000, 30000
-
-
-#define PERIOD    ((1000000 + Carrier_Frequency / 2) / Carrier_Frequency)
-#define HIGHTIME  (PERIOD * Duty_Cycle / 100)
-#define LOWTIME   (PERIOD - HIGHTIME)
-
 unsigned long sigTime = 0; //use in mark & space functions to keep track of time
-
 
 void setup() {
   wiringPiSetupSys();
@@ -54,21 +41,24 @@ void mark(unsigned int mLen) { //uses sigTime as end parameter
   sigTime += mLen; //mark ends at new sigTime
   unsigned long now = micros();
   unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
+
   if (dur == 0) return;
-  while ((micros() - now) < dur) { //just wait here until time is up
-    digitalWrite(LED, HIGH);
-    delayMicroseconds(HIGHTIME - 5);
-    digitalWrite(LED, LOW);
-    delayMicroseconds(LOWTIME - 6);
-  }
+
+  digitalWrite(LED, HIGH);
+
+  while ((micros() - now) < dur);
 }
 
 void space(unsigned int sLen) { //uses sigTime as end parameter
   sigTime += sLen; //space ends at new sigTime
   unsigned long now = micros();
   unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
+
+  digitalWrite(LED, LOW);
+
   if (dur == 0) return;
-  while ((micros() - now) < dur) ; //just wait here until time is up
+
+  while ((micros() - now) < dur); //just wait here until time is up
 }
 
 
@@ -76,14 +66,16 @@ void runSequence(int *numbers) {
   sigTime = micros(); //keeps rolling track of signal time to avoid impact of loop & code execution delays
 
   int count = sizeof(numbers) / sizeof(numbers[0]);
-  
-  for (int i = 0; i < count; i++) {
-    mark(numbers[i++]); //also move pointer to next position
 
-    if (i < count) {
+  for (int i = 0; i < count; i++) {
+    if (i & 1) {
       space(numbers[i]); //pointer will be moved by for loop
+    } else {
+      mark(numbers[i]); //also move pointer to next position
     }
   }
+
+  space(0);
 }
 
 
@@ -94,9 +86,9 @@ int main (int argc, char *argv[])
     printf("No numbers provided.\n");
     return 1;
   }
-  
+
   int *numbers = (int*)malloc(count * sizeof(int));
- 
+
   for (int i = 1; i < argc; i++) {
     numbers[i - 1] = atoi(argv[i]);
   }
@@ -108,4 +100,3 @@ int main (int argc, char *argv[])
 
   return 0;
 }
-
