@@ -29,7 +29,13 @@
 
 #define LED 17
 
+#define DUTY_CYCLE 56  //in percent (10->50), usually 33 or 50
+//TIP for true 50% use a value of 56, because of rounding errors
+//TIP for true 40% use a value of 48, because of rounding errors
+//TIP for true 33% use a value of 40, because of rounding errors
+
 unsigned long sigTime = 0; //use in mark & space functions to keep track of time
+
 
 void setup() {
   wiringPiSetupSys();
@@ -37,24 +43,28 @@ void setup() {
   digitalWrite(LED, LOW);
 }
 
-void mark(unsigned int mLen) { //uses sigTime as end parameter
+void mark(unsigned int mLen, int high, int low) { //uses sigTime as end parameter
   sigTime += mLen; //mark ends at new sigTime
+
   unsigned long now = micros();
   unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
 
   if (dur == 0) return;
 
-  digitalWrite(LED, HIGH);
-
-  while ((micros() - now) < dur);
+  while ((micros() - now) < dur) {
+    // Modulate the signal.
+    digitalWrite(LED, HIGH);
+    delayMicroseconds(high - 5);
+    digitalWrite(LED, LOW);
+    delayMicroseconds(low - 6);
+  }
 }
 
 void space(unsigned int sLen) { //uses sigTime as end parameter
   sigTime += sLen; //space ends at new sigTime
+
   unsigned long now = micros();
   unsigned long dur = sigTime - now; //allows for rolling time adjustment due to code execution delays
-
-  digitalWrite(LED, LOW);
 
   if (dur == 0) return;
 
@@ -62,20 +72,18 @@ void space(unsigned int sLen) { //uses sigTime as end parameter
 }
 
 
-void runSequence(int *numbers) {
+void runSequence(int *numbers, int high, int low) {
   sigTime = micros(); //keeps rolling track of signal time to avoid impact of loop & code execution delays
 
   int count = sizeof(numbers) / sizeof(numbers[0]);
 
   for (int i = 0; i < count; i++) {
     if (i & 1) {
-      space(numbers[i]); //pointer will be moved by for loop
+      mark(numbers[i], high, low); //also move pointer to next position
     } else {
-      mark(numbers[i]); //also move pointer to next position
+      space(numbers[i], high, low); //pointer will be moved by for loop
     }
   }
-
-  space(0);
 }
 
 
@@ -87,6 +95,12 @@ int main (int argc, char *argv[])
     return 1;
   }
 
+  int khz = 38000;
+
+  int period = (1000000 + khz / 2) / khz;
+  int high = period * DUTY_CYCLE / 100;
+  int low = period - high;
+
   int *numbers = (int*)malloc(count * sizeof(int));
 
   for (int i = 1; i < argc; i++) {
@@ -94,7 +108,7 @@ int main (int argc, char *argv[])
   }
 
   setup();
-  runSequence(numbers);
+  runSequence(numbers, high, low);
 
   free(numbers);
 
