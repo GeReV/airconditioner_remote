@@ -60,7 +60,7 @@ void mark(unsigned int mLen, int high, int low) { //uses sigTime as end paramete
   }
 }
 
-void space(unsigned int sLen) { //uses sigTime as end parameter
+void space(unsigned int sLen, int high, int low) { //uses sigTime as end parameter
   sigTime += sLen; //space ends at new sigTime
 
   unsigned long now = micros();
