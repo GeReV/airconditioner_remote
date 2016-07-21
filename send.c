@@ -36,7 +36,6 @@
 
 unsigned long sigTime = 0; //use in mark & space functions to keep track of time
 
-
 void setup() {
   wiringPiSetupSys();
   pinMode(LED, OUTPUT);
@@ -54,13 +53,13 @@ void mark(unsigned int mLen, int high, int low) { //uses sigTime as end paramete
   while ((micros() - now) < dur) {
     // Modulate the signal.
     digitalWrite(LED, HIGH);
-    delayMicroseconds(high - 5);
+    delayMicroseconds(high - 1);
     digitalWrite(LED, LOW);
-    delayMicroseconds(low - 6);
+    delayMicroseconds(low);
   }
 }
 
-void space(unsigned int sLen, int high, int low) { //uses sigTime as end parameter
+void space(unsigned int sLen) { //uses sigTime as end parameter
   sigTime += sLen; //space ends at new sigTime
 
   unsigned long now = micros();
@@ -72,18 +71,17 @@ void space(unsigned int sLen, int high, int low) { //uses sigTime as end paramet
 }
 
 
-void runSequence(int *numbers, int high, int low) {
+void runSequence(int *numbers, int count, int high, int low) {
   sigTime = micros(); //keeps rolling track of signal time to avoid impact of loop & code execution delays
-
-  int count = sizeof(numbers) / sizeof(numbers[0]);
 
   for (int i = 0; i < count; i++) {
     if (i & 1) {
-      mark(numbers[i], high, low); //also move pointer to next position
+      space(numbers[i]);
     } else {
-      space(numbers[i], high, low); //pointer will be moved by for loop
+      mark(numbers[i], high, low);
     }
   }
+  digitalWrite(LED, LOW);
 }
 
 
@@ -107,8 +105,13 @@ int main (int argc, char *argv[])
     numbers[i - 1] = atoi(argv[i]);
   }
 
+  printf("setup\n");
   setup();
-  runSequence(numbers, high, low);
+
+  printf("run\n");
+  runSequence(numbers, count, high, low);
+
+  printf("end\n");
 
   free(numbers);
 
