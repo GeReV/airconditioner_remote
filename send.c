@@ -29,7 +29,7 @@
 
 #define LED 18
 
-#define DEFAULT_CLOCK_FREQ = 192e5 // PWM clock is 19.2MHz by default
+#define DEFAULT_CLOCK_FREQ 192e5 // PWM clock is 19.2MHz by default
 
 unsigned long sigTime = 0; //use in mark & space functions to keep track of time
 
