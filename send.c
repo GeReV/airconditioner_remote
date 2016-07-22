@@ -27,17 +27,19 @@
 #include <stdlib.h>
 #include <wiringPi.h>
 
-#define LED 17
+#define LED 18
 
-#define DUTY_CYCLE 56  //in percent (10->50), usually 33 or 50
-//TIP for true 50% use a value of 56, because of rounding errors
-//TIP for true 40% use a value of 48, because of rounding errors
-//TIP for true 33% use a value of 40, because of rounding errors
+#define DEFAULT_CLOCK_FREQ = 192e5 // PWM clock is 19.2MHz by default
 
 unsigned long sigTime = 0; //use in mark & space functions to keep track of time
 
-void setup() {
-  wiringPiSetupSys();
+void setup(int khz) {
+  wiringPiSetup();
+
+  pwmSetMode(PWM_MODE_MS);
+  pwmSetClock(DEFAULT_CLOCK_FREQ / khz);
+  pwmSetRange(2); // 50% duty cycle.
+
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
 }
@@ -50,13 +52,9 @@ void mark(unsigned int mLen, int high, int low) { //uses sigTime as end paramete
 
   if (dur == 0) return;
 
-  while ((micros() - now) < dur) {
-    // Modulate the signal.
-    digitalWrite(LED, HIGH);
-    delayMicroseconds(high - 1);
-    digitalWrite(LED, LOW);
-    delayMicroseconds(low);
-  }
+  digitalWrite(LED, HIGH);
+  while ((micros() - now) < dur);
+  digitalWrite(LED, LOW);
 }
 
 void space(unsigned int sLen) { //uses sigTime as end parameter
@@ -71,14 +69,14 @@ void space(unsigned int sLen) { //uses sigTime as end parameter
 }
 
 
-void runSequence(int *numbers, int count, int high, int low) {
+void runSequence(int *numbers, int count) {
   sigTime = micros(); //keeps rolling track of signal time to avoid impact of loop & code execution delays
 
   for (int i = 0; i < count; i++) {
     if (i & 1) {
       space(numbers[i]);
     } else {
-      mark(numbers[i], high, low);
+      mark(numbers[i]);
     }
   }
   digitalWrite(LED, LOW);
@@ -95,10 +93,6 @@ int main (int argc, char *argv[])
 
   int khz = 38000;
 
-  int period = (1000000 + khz / 2) / khz;
-  int high = period * DUTY_CYCLE / 100;
-  int low = period - high;
-
   int *numbers = (int*)malloc(count * sizeof(int));
 
   for (int i = 1; i < argc; i++) {
@@ -106,10 +100,10 @@ int main (int argc, char *argv[])
   }
 
   printf("setup\n");
-  setup();
+  setup(khz);
 
   printf("run\n");
-  runSequence(numbers, count, high, low);
+  runSequence(numbers, count);
 
   printf("end\n");
 
