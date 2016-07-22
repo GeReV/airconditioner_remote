@@ -44,7 +44,7 @@ void setup(int khz) {
   digitalWrite(LED, LOW);
 }
 
-void mark(unsigned int mLen, int high, int low) { //uses sigTime as end parameter
+void mark(unsigned int mLen) { //uses sigTime as end parameter
   sigTime += mLen; //mark ends at new sigTime
 
   unsigned long now = micros();
