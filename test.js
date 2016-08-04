@@ -3,19 +3,19 @@ const irsend = require('./irsend');
 
 const state = {
   power: true,
-  temp: 23,
+  temp: 20,
   mode: electra.MODES.cold,
-  fan: electra.FAN.low,
+  fan: electra.FAN.high,
   swingh: true,
-  swingv: true,
+  swingv: false,
   timerOn: null,
   timerOff: null
 };
 
 const irOpts = {
-  durationOne: 1750,
-  durationZero: 600,
-  durationSeparator: 600,
+  durationOne: 1690,
+  durationZero: 560,
+  durationSeparator: 560,
   intro: [9000, 4500]
 };
 

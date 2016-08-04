@@ -54,8 +54,33 @@ const modeValues = {
 
 const HEAD = 0xc3;
 
+function reverseBits(byte) {
+  let b = 0;
+  let shift = 0;
+
+  while (shift < 8){
+    b <<= 1;
+    b |= (byte & 1);
+    byte >>>= 1;
+
+    shift++;
+  }
+
+  return b;
+}
+
 function checksum(array) {
-  return array.reduce((sum, val) => sum + val, 0) % 0xff;
+  return array.reduce((sum, val) => sum + val, 0) % (2 << 8);
+}
+
+function reverse(n) {
+  let result = 0;
+  while (n) {
+    result |= n & 1;
+    result <<= 1;
+    n >>>= 1;
+  }
+  return result;
 }
 
 function build(opts){
@@ -63,16 +88,15 @@ function build(opts){
     .then(opts => {
       const message = new Uint8Array(13);
 
-      const tempHigh = (opts.temp >>> 8) - 1;
-      const tempLow = opts.temp % 8;
+      const temp = (opts.temp - 8) & 0x1f;
       const swingv = opts.swingv ? 0x0 : 0x7;
       const swingh = opts.swingh ? 0x0 : 0x7;
       const now = new Date();
 
       message[0] = HEAD;
-      message[1] = tempHigh << 7 | tempLow << 3 | swingv;
-      message[2] = swingh << 6 | (now.getHours());
-      message[3] = now.getMinutes();
+      message[1] = temp << 3 | swingv;
+      message[2] = swingh << 5 | 18;
+      message[3] = 15;
       message[4] = fanValues[opts.fan] << 5;
       message[5] = 0x00;
       message[6] = modeValues[opts.mode] << 5;
@@ -80,7 +104,7 @@ function build(opts){
       message[8] = 0x00;
       message[9] = opts.power ? 0x20 : 0x00;
       message[10] = 0x00;
-      message[11] = 0x00; // TODO: Should be button pressed. Can't determine if relevant.
+      message[11] = 0x0; // TODO: Should be button pressed. Can't determine if relevant.
       message[12] = checksum(message.slice(0, -1));
 
       return message;
