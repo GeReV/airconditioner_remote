@@ -120,6 +120,6 @@ module.exports = function(buffer, opts) {
   const reversed = buffer.map(reverseBits);
 
   return optsSchema.validate(opts)
-    .then(opts => build(reversed, opts))
+    .then(opts => build(buffer, opts))
     .then(send);
 };
