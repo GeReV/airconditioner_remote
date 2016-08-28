@@ -62,7 +62,7 @@ function send(timing) {
   port.on('open', () => {
     console.log('Open.');
 
-    port.write(timings.join(' '), err => {
+    port.write(timing.join(' '), err => {
       if (err) {
         return console.error(err);
       }
