@@ -3,39 +3,48 @@
  * Module dependencies.
  */
 
-var express = require('express'),
-    engines = require('consolidate'),
-    http = require('http'),
-    path = require('path'),
-    CronJob = require('cron').CronJob,
-    Temperature = require('./temperature');
+const express = require('express'),
+      engines = require('consolidate'),
+      http = require('http'),
+      path = require('path'),
+      low = require('lowdb'),
+      CronJob = require('cron').CronJob,
+      Temperature = require('./temperature');
 
-var electra = require('./electra_ir');
-var irsend = require('./irsend');
+const electra = require('./electra_ir');
+const irsend = require('./irsend');
 
-var app = express();
+const app = express();
 
-var state = {
-  power: false,
-  temp: 25,
-  mode: electra.MODES.cold,
-  fan: electra.FAN.low,
-  swingh: true,
-  swingv: true,
-  timerOn: null,
-  timerOff: null
-};
+const db = low('state.json', { storage: require('lowdb/lib/file-async') })
+  .defaults({
+    state: {
+      power: false,
+      temp: 25,
+      mode: electra.MODES.cold,
+      fan: electra.FAN.low,
+      swingh: true,
+      swingv: true,
+      timerOn: null,
+      timerOff: null
+    }
+  });
+
+const getState = () => db.get('state').value();
 
 var timers = {
     timerOn: null,
     timerOff: null
 };
 
-var setState = function(command) {
-  var power = /^power-(on|off)$/i,
-      temp = /^temp-(\d{2})$/i,
-      mode = /^mode-(cold|hot|fan|dehydrate)$/i,
-      fan = /^fan-(small|medium|large)$/i;
+var power = /^power-(on|off)$/i,
+    temp = /^temp-(\d{2})$/i,
+    mode = /^mode-(cold|hot|fan|dehydrate)$/i,
+    fan = /^fan-(small|medium|large)$/i;
+
+const setState = command => {
+  const state = db.get('state')
+    .value();
 
   if (power.test(command)) {
     state.on = power.exec(command)[1] === 'on';
@@ -52,6 +61,8 @@ var setState = function(command) {
   if (fan.test(command)) {
     state.fan = fan.exec(command)[1];
   }
+
+  db.set('state', state).value();
 };
 
 const irOpts = {
@@ -64,7 +75,7 @@ const irOpts = {
 const sendCommand = (command, cb) => {
     setState(command);
 
-    electra.build(state)
+    electra.build(getState())
       .catch(err => console.error(err))
       .then(message => irsend(message, irOpts));
 };
@@ -100,7 +111,7 @@ app.get('/', auth, function(req, res) {
 });
 
 app.get('/remote', auth, function(req, res) {
-  res.json(state);
+  res.json(getState());
 });
 
 app.post('/remote/timer/:state/clear', auth, function (req, res) {
@@ -110,10 +121,12 @@ app.post('/remote/timer/:state/clear', auth, function (req, res) {
 
     if (/^(on|off)$/.test(req.params.state) && timers[attr] !== null) {
         timers[attr].stop();
-        timers[attr] = state[attr] = null;
+        timers[attr] = null;
+
+        db.set(`state.${attr}`, null).value();
     }
 
-    res.json(state);
+    res.json(getState());
 });
 
 app.post('/remote/timer/:state', auth, function (req, res) {
@@ -138,20 +151,22 @@ app.post('/remote/timer/:state', auth, function (req, res) {
 
             this.stop();
           }, function () {
-            timers[stateAttr] = state[stateAttr] = null;
+            timers[stateAttr] = null;
+
+            db.set(`state.${stateAttr}`, null).value();
           }, true);
 
-        state[stateAttr] = date;
+        db.set(`state.${stateAttr}`, date).value();
     }
 
-    res.json(state);
+    res.json(getState());
 });
 
-app.post('/remote/:command', auth, function(req, res) {
-  console.log('Sending "' + req.params.command + '" to air conditioner.');
+app.post('/remote/:command', auth, (req, res) => {
+  console.log(`Sending ${req.params.command} to air conditioner.`);
 
-  sendCommand(req.params.command, function () {
-      res.json(state);
+  sendCommand(req.params.command, () => {
+      res.json(getState());
   });
 });
 

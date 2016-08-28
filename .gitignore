@@ -1,6 +1,9 @@
 public/javascripts/
 public/stylsheets/
 
+state.json
+.~state.json
+
 tmp/
 
 lib-cov
