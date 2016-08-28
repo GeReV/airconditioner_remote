@@ -24,11 +24,11 @@
                 %i.fa.fa-minus
         .r
           .btn-group{ "data-toggle": "buttons" }
-            %label.btn.active.mode-freeze{ "data-command": "mode-freeze" }
-              %input{ "type": "radio", "name": "fan", "id": "mode-freeze"}
+            %label.btn.active.mode-freeze{ "data-command": "mode-cold" }
+              %input{ "type": "radio", "name": "fan", "id": "mode-cold"}
               %i.wi.wi-snowflake-cold
-            %label.btn.mode-heat{ "data-command": "mode-heat" }
-              %input{ "type": "radio", "name": "fan", "id": "mode-heat"}
+            %label.btn.mode-heat{ "data-command": "mode-hot" }
+              %input{ "type": "radio", "name": "fan", "id": "mode-hot"}
               %i.wi.wi-day-sunny
             %label.btn.mode-fan{ "data-command": "mode-fan" }
               %input{ "type": "radio", "name": "fan", "id": "mode-fan"}
@@ -73,7 +73,6 @@
         - if (temperature)
           .r.temperature-plot
             %h2 Room Temperature
-          
     %script{ src: "javascripts/jquery.js" }
     %script{ src: "javascripts/jquery.throttle-debounce.js" }
     %script{ src: "javascripts/bootstrap-button.js" }

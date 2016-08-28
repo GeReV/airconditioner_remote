@@ -6,17 +6,6 @@ module.exports = function(grunt) {
     clean: {
       src: ['public/javascripts', 'public/stylesheets']
     },
-    jshint: {
-      gruntfile: {
-        options: {
-          jshintrc: '.jshintrc'
-        },
-        src: 'Gruntfile.js'
-      },
-      index: {
-        src: 'app.js'
-      }
-    },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -72,7 +61,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-autoprefixer');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'clean', 'uglify:release', 'sass:release', 'autoprefixer']);
-  grunt.registerTask('debug', ['jshint', 'clean', 'uglify:debug', 'sass:debug', 'autoprefixer']);
+  grunt.registerTask('default', ['clean', 'uglify:release', 'sass:release', 'autoprefixer']);
+  grunt.registerTask('debug', ['clean', 'uglify:debug', 'sass:debug', 'autoprefixer']);
 
 };

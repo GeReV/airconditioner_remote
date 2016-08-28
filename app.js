@@ -34,7 +34,7 @@ var timers = {
 var setState = function(command) {
   var power = /^power-(on|off)$/i,
       temp = /^temp-(\d{2})$/i,
-      mode = /^mode-(freeze|heat|fan)$/i,
+      mode = /^mode-(cold|hot|fan|dehydrate)$/i,
       fan = /^fan-(small|medium|large)$/i;
 
   if (power.test(command)) {
@@ -54,12 +54,19 @@ var setState = function(command) {
   }
 };
 
+const irOpts = {
+  durationOne: 1690,
+  durationZero: 560,
+  durationSeparator: 560,
+  intro: [9000, 4500]
+};
+
 const sendCommand = (command, cb) => {
     setState(command);
 
     electra.build(state)
       .catch(err => console.error(err))
-      .then(irsend);
+      .then(message => irsend(message, irOpts));
 };
 
 var capitalize = function (s) {

@@ -36,7 +36,7 @@ h1 {
 }
 .r {
   margin: 5px auto;
-  
+
   &.first {
     display: flex;
     flex-direction: columns;
@@ -48,23 +48,23 @@ h1 {
   font-size: 32px;
   line-height: 40px;
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
-  
+
   &:hover {
     background-color: darken($btn-default-bg, 5%);
   }
-  
+
   &:active,
   &.active {
     background-color: darken($btn-default-bg, 10%);
   }
-  
+
   &.btn-success {
     background-color: $btn-success-bg;
-    
+
     &:hover {
       background-color: darken($btn-success-bg, 5%);
     }
-    
+
     &:active,
     &.active {
       background-color: darken($btn-success-bg, 10%);
@@ -73,12 +73,12 @@ h1 {
 }
 .btn-group {
   display: flex;
-  
+
   &.btn-group-vertical,
   &.btn-group-inline {
     display: inline-block;
   }
-  
+
   .btn {
     font-size: 32px;
     flex: 1 0 60px;
@@ -105,17 +105,10 @@ h1 {
 }
 .digital {
   display: inline-block;
-  font-family: "7segment";
+  font-family: monospace;
   position: relative;
   vertical-align: middle;
-}
-.digital:after {
-  color: #ddd;
-  content: "88";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  z-index: -1;
+  text-shadow: 2px 2px 0 #ddd;
 }
 .deg {
   text-shadow: 2px 2px 0 #ddd;
