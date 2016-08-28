@@ -1,8 +1,5 @@
 const yup = require('yup');
-const wpi = require('wiring-pi');
-const exec = require('child_process').exec;
-
-const outputPin = 0;
+const SerialPort = require('serialport');
 
 const optsSchema = yup.object()
   .shape({
@@ -43,7 +40,7 @@ function build(buffer, opts) {
     for (let bit = 0; bit < 8; bit++) {
       const index = i * 16 + bit * 2;
 
-      message[index] = opts.durationSeparator; // Convert to nanoseconds.
+      message[index] = opts.durationSeparator;
 
       message[index + 1] = (byte & 1) ? opts.durationOne : opts.durationZero;
 
@@ -55,64 +52,31 @@ function build(buffer, opts) {
   return intro.concat(message).concat([opts.durationSeparator]);
 }
 
-function nanoseconds(hrtime) {
-  return hrtime[0] * 1e9 + hrtime[1];
-}
-
-function bitbang(timing) {
-  const l = timing.length;
-
-  let lastTick = nanoseconds(process.hrtime());
-  let state = false;
-  let dt = 0;
-  let i = 0;
-
-  function tick() {
-    if (i >= l) {
-      return;
-    }
-
-    if (dt >= timing[i]) {
-      console.log(dt);
-      i++;
-      dt = 0;
-    }
-
-    const odd = (i & 1) === 1;
-
-    if (odd && state) {
-      // Turn off.
-      state = false;
-
-      wpi.digitalWrite(outputPin, 0);
-    } else if (!odd && !state) {
-      // Turn on.
-      state = true;
-
-      wpi.digitalWrite(outputPin, 1);
-    }
-
-    const currentTick = nanoseconds(process.hrtime());
-
-    dt += (currentTick - lastTick);
-    lastTick = currentTick;
-
-    process.nextTick(tick);
-  }
-
-  wpi.pinMode(outputPin, wpi.OUTPUT);
-
-  process.nextTick(tick);
-}
-
 function send(timing) {
   console.log(`Sending...`);
-  console.log(timing.join(' '));
-  exec(`./send ${timing.join(' ')}`, (error, stdout, stderr) => {
-    console.log(stdout);
-    if (error) {
-      console.error(stderr);
-    }
+
+  const port = new SerialPort('/dev/ttyACM0', {
+    baudRate: 9600
+  });
+
+  port.on('open', () => {
+    console.log('Open.');
+
+    port.write(timings.join(' '), err => {
+      if (err) {
+        return console.error(err);
+      }
+
+      console.log('Sent.');
+
+      port.close(err => {
+        if (err) {
+          return console.error(err);
+        }
+
+        console.log('Closed.');
+      });
+    });
   });
 }
 

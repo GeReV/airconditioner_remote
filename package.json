@@ -15,11 +15,8 @@
     "glob": "^4.0.5",
     "hamljs": "0.6.1",
     "keymirror": "^0.1.1",
-    "lirc_node": "0.0.1",
     "moment": "^2.8.1",
-    "pi-gpio": "0.0.8",
-    "rpi-gpio": "^0.7.0",
-    "wiring-pi": "^2.1.1",
+    "serialport": "^4.0.1",
     "yup": "^0.18.3"
   },
   "devDependencies": {

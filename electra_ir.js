@@ -95,8 +95,8 @@ function build(opts){
 
       message[0] = HEAD;
       message[1] = temp << 3 | swingv;
-      message[2] = swingh << 5 | 18;
-      message[3] = 15;
+      message[2] = swingh << 5 | now.getHours();
+      message[3] = now.getMinutes();
       message[4] = fanValues[opts.fan] << 5;
       message[5] = 0x00;
       message[6] = modeValues[opts.mode] << 5;

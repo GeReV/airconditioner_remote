@@ -10,7 +10,8 @@ var express = require('express'),
     CronJob = require('cron').CronJob,
     Temperature = require('./temperature');
 
-const electra = require('./electra_ir');
+var electra = require('./electra_ir');
+var irsend = require('./irsend');
 
 var app = express();
 
@@ -58,7 +59,7 @@ const sendCommand = (command, cb) => {
 
     electra.build(state)
       .catch(err => console.error(err))
-      .then(message => console.log(message));
+      .then(irsend);
 };
 
 var capitalize = function (s) {

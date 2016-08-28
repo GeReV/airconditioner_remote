@@ -39,7 +39,7 @@
 
       if ((state.timerOn || state.timerOff) && timerInterval === null) {
         timerInterval = setInterval(function() {
-          var now = (new Date).getTime();
+          var now = Date.now();
 
           if (timers.timerOn && now >= timers.timerOn.getTime()) {
             timers.timerOn = null;
@@ -111,7 +111,7 @@
           up: '.temperature .up',
           down: '.temperature .down',
           start: 25,
-          min: 12,
+          min: 18,
           max: 32
         });
 
@@ -136,7 +136,7 @@
       }));
 
       $('.timer-set').on('click', function () {
-          parent = $(this).closest('.timer');
+          var parent = $(this).closest('.timer');
 
           var match = /timer-(on|off)/.exec(parent.get(0).className)[1];
 
@@ -144,7 +144,7 @@
       });
 
       $('.timer-clear').on('click', function () {
-          parent = $(this).closest('.timer');
+          var parent = $(this).closest('.timer');
 
           var match = /timer-(on|off)/.exec(parent.get(0).className)[1];
 
