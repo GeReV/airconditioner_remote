@@ -47,7 +47,7 @@ const setState = command => {
     .value();
 
   if (power.test(command)) {
-    state.on = power.exec(command)[1] === 'on';
+    state.power = power.exec(command)[1] === 'on';
   }
 
   if (temp.test(command)) {
