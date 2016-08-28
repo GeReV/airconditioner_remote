@@ -27,7 +27,7 @@
 
       $('#power')
         .toggleClass('active', state.power)
-        .attr('data-command', 'power-' + (state.power ? 'off' : 'on'));
+        .attr('data-command', 'power-' + (state.power ? 'on' : 'off'));
 
       $('.temperature .digital').spinner('update', state.temp);
 
