@@ -53,30 +53,37 @@ function build(buffer, opts) {
 }
 
 function send(timing) {
-  console.log(`Sending...`);
+  return new Promise((resolve, reject) => {
+    console.log(`Sending...`);
 
-  const port = new SerialPort('/dev/ttyACM0', {
-    baudRate: 9600
-  });
+    const port = new SerialPort('/dev/ttyACM0', {
+      baudRate: 9600
+    });
 
-  port.on('open', () => {
-    console.log('Open.');
+    port.on('error', reject);
 
-    port.write(timing.join(' '), err => {
-      if (err) {
-        return console.error(err);
-      }
+    port.on('open', () => {
+      console.log('Open.');
 
-      console.log('Sent.');
-
-      port.close(err => {
+      port.write(timing.join(' '), err => {
         if (err) {
-          return console.error(err);
+          reject(err);
         }
 
-        console.log('Closed.');
+        console.log('Sent.');
+
+        port.close(err => {
+          if (err) {
+            reject(err);
+          }
+
+          console.log('Closed.');
+
+          resolve();
+        });
       });
     });
+
   });
 }
 

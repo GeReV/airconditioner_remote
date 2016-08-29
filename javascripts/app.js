@@ -26,8 +26,8 @@
       }
 
       $('#power')
-        .toggleClass('btn-success', state.power)
-        .attr('data-command', 'power-' + (state.power ? 'on' : 'off'));
+        .toggleClass('active', state.power)
+        .attr('data-command', 'power-' + (state.power ? 'off' : 'on'));
 
       $('.temperature .digital').spinner('update', state.temp);
 
@@ -74,12 +74,31 @@
         return mins + ' minute' + (mins === 1 ? '' : 's') + ' from now';
     }
 
-    function showAlert() {
+    var alertTimeout;
+
+    function showAlert(xhr, status) {
         var alert = $('.alert');
 
-        alert.removeClass('alert-hidden');
+        if (alertTimeout) {
+            clearTimeout(alertTimeout);
+            alertTimeout = null;
+        }
 
-        setTimeout(function () {
+        alert.removeClass('alert-success alert-danger');
+
+        if (status === 'error') {
+            alert.addClass('alert-danger')
+                .text('An error occurred.');
+        } else {
+            alert.addClass('alert-success')
+                .text('Command sent.');
+        }
+
+        setTimeout(function() {
+          alert.removeClass('alert-hidden');
+        }, 16);
+
+        alertTimeout = setTimeout(function () {
             alert.addClass('alert-hidden');
         }, 2000);
     }
@@ -87,7 +106,7 @@
     function sendCommand(url, data) {
         $.post(url, data)
           .done(setState)
-          .done(showAlert);
+          .complete(showAlert);
     }
 
     $.getJSON('remote').done(function(result) {

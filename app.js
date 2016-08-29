@@ -72,10 +72,10 @@ const irOpts = {
   intro: [9000, 4500]
 };
 
-const sendCommand = (command, cb) => {
+const sendCommand = command => {
     setState(command);
 
-    electra.build(getState())
+    return electra.build(getState())
       .catch(err => console.error(err))
       .then(message => irsend(message, irOpts));
 };
@@ -165,9 +165,13 @@ app.post('/remote/timer/:state', auth, function (req, res) {
 app.post('/remote/:command', auth, (req, res) => {
   console.log(`Sending ${req.params.command} to air conditioner.`);
 
-  sendCommand(req.params.command, () => {
-      res.json(getState());
-  });
+  sendCommand(req.params.command)
+      .catch(err => {
+        console.error(err);
+
+        res.status(500).json(getState());
+      })
+      .then(() => res.json(getState()));
 });
 
 Temperature.init(app, auth);
