@@ -40,7 +40,7 @@ var timers = {
 var power = /^power-(on|off)$/i,
     temp = /^temp-(\d{2})$/i,
     mode = /^mode-(cold|hot|fan|dehydrate)$/i,
-    fan = /^fan-(small|medium|large)$/i;
+    fan = /^fan-(low|medium|high)$/i;
 
 const setState = command => {
   const state = db.get('state')
