@@ -1,0 +1,11 @@
+[package]
+name = "airconditioner_remote"
+version = "0.1.0"
+authors = ["Amir Grozki <amirgrozki@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+time = "0.1"
+rocket = "0.4.0"
+rocket_contrib = "0.4.0"
+rppal = { version = "0.11.2", features = ["hal"] }

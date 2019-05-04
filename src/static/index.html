@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Air Conditioner Remote</title>
+    <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport"/>
+    <link href="/static/style.css" rel="stylesheet"></link>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <header>
+        <h1>Air Conditioner Remote</h1>
+      </header>
+      <div id="main" role="main">
+        <div class="alert alert-hidden">&nbsp;</div>
+        <div class="r first">
+          <button class="btn" data-command="power-on" data-toggle="button" id="power">
+            <i class="fa fa-power-off"></i>
+          </button>
+          <span class="temperature">
+            <span class="digital">00</span>
+            <span class="deg">&deg;</span>
+            <div class="btn-group-vertical">
+              <button class="btn up">
+                <i class="fa fa-plus"></i>
+              </button>
+              <button class="btn down">
+                <i class="fa fa-minus"></i>
+              </button>
+            </div>
+          </span>
+        </div>
+        <div class="r">
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn active mode-freeze" data-command="mode-cold">
+              <input id="mode-cold" name="fan" type="radio"></input>
+              <i class="wi wi-snowflake-cold"></i>
+            </label>
+            <label class="btn mode-heat" data-command="mode-hot">
+              <input id="mode-hot" name="fan" type="radio"></input>
+              <i class="wi wi-day-sunny"></i>
+            </label>
+            <label class="btn mode-fan" data-command="mode-fan">
+              <input id="mode-fan" name="fan" type="radio"></input>
+              <i class="wi wi-hurricane"></i>
+            </label>
+          </div>
+        </div>
+        <div class="r">
+          <div class="btn-group" data-toggle="buttons">
+            <label class="btn active fan-low" data-command="fan-low">
+              <input id="fan-low" name="fan" type="radio"></input>
+              <i class="wi wi-hurricane"></i>
+            </label>
+            <label class="btn fan-medium" data-command="fan-medium">
+              <input id="fan-medium" name="fan" type="radio"></input>
+              <i class="wi wi-hurricane"></i>
+            </label>
+            <label class="btn fan-high" data-command="fan-high">
+              <input id="fan-high" name="fan" type="radio"></input>
+              <i class="wi wi-hurricane"></i>
+            </label>
+          </div>
+        </div>
+        <div class="r timer timer-on">
+          On in
+          <span class="digital">00</span>
+          <div class="btn-group btn-group-inline">
+            <button class="btn up">
+              <i class="fa fa-plus"></i>
+            </button>
+            <button class="btn down">
+              <i class="fa fa-minus"></i>
+            </button>
+          </div>
+          minutes
+          <button class="btn btn-small timer-set">Set</button>
+          <span class="info hidden">
+            <button class="btn btn-small timer-clear">Clear</button>
+            <span class="label label-info"></span>
+          </span>
+        </div>
+        <div class="r timer timer-off">
+          Off in
+          <span class="digital">00</span>
+          <div class="btn-group btn-group-inline">
+            <button class="btn up">
+              <i class="fa fa-plus"></i>
+            </button>
+            <button class="btn down">
+              <i class="fa fa-minus"></i>
+            </button>
+          </div>
+          minutes
+          <button class="btn btn-small timer-set">Set</button>
+          <span class="info hidden">
+            <button class="btn btn-small timer-clear">Clear</button>
+            <span class="label label-info"></span>
+          </span>
+        </div>
+        <!-- <% if (temperature) %>
+          <div class="r temperature-plot">
+            <h2>Room Temperature</h2>
+          </div>
+        <% end %> -->
+      </div>
+    </div>
+    <script src="public/js/jquery.js"></script>
+    <script src="public/js/jquery.throttle-debounce.js"></script>
+    <script src="public/js/bootstrap-button.js"></script>
+    <script src="public/js/fastbutton.js"></script>
+    <script src="public/js/spinner.js"></script>
+    <script src="public/js/app.js"></script>
+    <!-- <% if (temperature) %>
+      <script src="javascripts/d3.js"></script>
+      <script src="javascripts/temperature-plot.js"></script>
+    <% end %> -->
+  </body>
+</html>
