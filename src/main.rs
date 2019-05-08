@@ -1,13 +1,18 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] extern crate rocket;
+#[macro_use] 
+extern crate rocket;
 
 mod protocol;
+mod irsend;
 
 use std::path::{ Path };
 
 use rocket::response::NamedFile;
 use rocket_contrib::serve::{ StaticFiles };
+
+use protocol::electra::*;
+use protocol::Protocol;
 
 #[get("/")]
 fn index() -> Option<NamedFile> {
