@@ -29,8 +29,19 @@ fn index() -> Option<NamedFile> {
 }
 
 fn main() {
-    rocket::ignite()
-        .mount("/", routes![index])
-        .mount("/public", StaticFiles::from("/static"))
-        .launch();
+    // rocket::ignite()
+    //     .mount("/", routes![index])
+    //     .mount("/public", StaticFiles::from("/static"))
+    //     .launch();
+
+    let message = Electra {
+        power: true,
+        mode: Mode::Cold,
+        fan: FanStrength::Low,
+        temp: 22,
+        swing_h: false,
+        swing_v: false,
+    };
+
+    irsend::send(&message.build_message()).unwrap();
 }

@@ -2,14 +2,16 @@ use std::time::{Duration, Instant};
 
 use rppal::pwm::{Channel, Pwm, Polarity, Error};
 
+const epsilon: Duration = Duration::from_micros(4);
+
 fn sleep(delay: Duration) {
     let now = Instant::now();
 
-    while now.elapsed() < delay {};
+    while now.elapsed() < delay - epsilon {};
 }
 
-fn space(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
-	pwm.disable()?;
+fn space(delay: Duration) -> Result<(), Error> {
+	// pwm.disable()?;
 
     if delay.as_micros() > 0 {
         sleep(delay);
@@ -18,8 +20,8 @@ fn space(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
     Ok(())
 }
 
-fn mark(pwm: &Pwm, delay: Duration) -> Result<(), Error> {	
-    pwm.enable()?;
+fn mark(delay: Duration) -> Result<(), Error> {	
+    // pwm.enable()?;
 
     if delay.as_micros() > 0 {
         sleep(delay);
@@ -29,17 +31,38 @@ fn mark(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
 }
 
 pub fn send(buffer: &Vec<Duration>) -> Result<(), Error> {
-    let pwm = Pwm::with_frequency(Channel::Pwm0, 38_000.0, 0.5, Polarity::Normal, false)?;
+    // let pwm = Pwm::with_frequency(Channel::Pwm0, 38_000.0, 0.5, Polarity::Normal, false)?;
+
+    let mut results = Vec::new();
 
     for (i, &delay) in buffer.iter().enumerate() {
+        let now = Instant::now();
+
         if i & 1 == 1 {
-            space(&pwm, delay)?;
+            space(delay)?;
         } else {
-            mark(&pwm, delay)?;
+            mark(delay)?;
         }
+
+        results.push((delay, now.elapsed()));
     }
 
-    pwm.disable()?;
+    println!("{:?}", results);
+
+    let diffs: Vec<Duration> = results.into_iter().map(|(a, b)| {
+        if a > b {
+            a - b
+        } else {
+            b - a
+        }
+    }).collect();
+
+    println!();
+    println!("{:?}", diffs);
+    println!();    
+    println!("max: {:?}", diffs.into_iter().max());
+
+    // pwm.disable()?;
 
     Ok(())
 }
