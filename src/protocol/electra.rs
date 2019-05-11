@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use crate::protocol::Protocol;
 
-const HEADER: u8 = 0x3c;
+const HEADER: u8 = 0xc3;
 
 #[derive(Copy, Clone)]
 pub enum FanStrength {
@@ -73,7 +73,7 @@ impl Protocol for Electra {
             now.tm_min as u8,
             fan << 5,
             0x00,
-            mode << 4,
+            mode << 5,
             0x00,
             0x00,
             power,
