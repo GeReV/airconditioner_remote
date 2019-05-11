@@ -5,7 +5,9 @@ authors = ["Amir Grozki <amirgrozki@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+glob = "0.3.0"
 time = "0.1"
+regex = "1"
 rocket = "0.4.0"
 rocket_contrib = "0.4.0"
 nb = "0.1.2"
