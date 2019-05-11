@@ -22,16 +22,24 @@ fn open() -> io::Result<String> {
     Ok(contents)
 }
 
-pub fn read() -> io::Result<f32> {
+pub fn read_str() -> io::Result<String> {
     let contents = open()?;
 
     let regex = Regex::new(r"t=([0-9]+)").unwrap();
 
     let caps = regex.captures(&contents).unwrap();
 
-    let temp_str: &str = caps.get(1).unwrap().as_str();
+    Ok(String::from(caps.get(1).unwrap().as_str()))
+}
 
-    let temp = temp_str.parse::<f32>().unwrap();
+pub fn read_f32() -> io::Result<f32> {
+    let temp = read_str()?.parse::<f32>().unwrap();
 
     Ok(temp / 1000.0)
+}
+
+pub fn read_u32() -> io::Result<u32> {
+    let temp = read_str()?.parse::<u32>().unwrap();
+
+    Ok(temp)
 }
