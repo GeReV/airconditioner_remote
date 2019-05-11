@@ -1,17 +1,22 @@
-use std::time::{Duration, Instant};
+use std::time::{Duration};
 
+use hal::prelude::*;
+
+use rppal::hal::Timer;
 use rppal::pwm::{Channel, Pwm, Polarity, Error};
 
-const epsilon: Duration = Duration::from_micros(4);
+const EPSILON: Duration = Duration::from_micros(4);
 
 fn sleep(delay: Duration) {
-    let now = Instant::now();
+    let mut timer = Timer::new();
 
-    while now.elapsed() < delay - epsilon {};
+    timer.start(delay - EPSILON);
+
+    block!(timer.wait()).unwrap();
 }
 
-fn space(delay: Duration) -> Result<(), Error> {
-	// pwm.disable()?;
+fn space(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
+	pwm.disable()?;
 
     if delay.as_micros() > 0 {
         sleep(delay);
@@ -20,8 +25,8 @@ fn space(delay: Duration) -> Result<(), Error> {
     Ok(())
 }
 
-fn mark(delay: Duration) -> Result<(), Error> {	
-    // pwm.enable()?;
+fn mark(pwm: &Pwm, delay: Duration) -> Result<(), Error> {	
+    pwm.enable()?;
 
     if delay.as_micros() > 0 {
         sleep(delay);
@@ -30,39 +35,19 @@ fn mark(delay: Duration) -> Result<(), Error> {
     Ok(())
 }
 
+// Adapted from: https://github.com/z3t0/Arduino-IRremote/blob/master/irSend.cpp
 pub fn send(buffer: &Vec<Duration>) -> Result<(), Error> {
-    // let pwm = Pwm::with_frequency(Channel::Pwm0, 38_000.0, 0.5, Polarity::Normal, false)?;
-
-    let mut results = Vec::new();
+    let pwm = Pwm::with_frequency(Channel::Pwm0, 38_000.0, 0.5, Polarity::Normal, false)?;
 
     for (i, &delay) in buffer.iter().enumerate() {
-        let now = Instant::now();
-
         if i & 1 == 1 {
-            space(delay)?;
+            space(&pwm, delay)?;
         } else {
-            mark(delay)?;
+            mark(&pwm, delay)?;
         }
-
-        results.push((delay, now.elapsed()));
     }
 
-    println!("{:?}", results);
-
-    let diffs: Vec<Duration> = results.into_iter().map(|(a, b)| {
-        if a > b {
-            a - b
-        } else {
-            b - a
-        }
-    }).collect();
-
-    println!();
-    println!("{:?}", diffs);
-    println!();    
-    println!("max: {:?}", diffs.into_iter().max());
-
-    // pwm.disable()?;
+    pwm.disable()?;
 
     Ok(())
 }

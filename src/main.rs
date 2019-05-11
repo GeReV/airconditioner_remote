@@ -3,9 +3,14 @@
 #[macro_use] 
 extern crate rocket;
 
+#[macro_use(block)]
+extern crate nb;
+extern crate embedded_hal as hal;
+
 mod protocol;
 mod irsend;
 
+use std::error::Error;
 use std::path::{ Path };
 
 use rocket::response::NamedFile;
@@ -43,5 +48,8 @@ fn main() {
         swing_v: false,
     };
 
-    irsend::send(&message.build_message()).unwrap();
+    match irsend::send(&message.build_message()) {
+        Err(e) => println!("Error sending IR message: {:?}", e),
+        _ => println!("Sent."),
+    }
 }
