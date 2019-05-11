@@ -1,5 +1,9 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+extern crate glob;
+
+extern crate regex;
+
 #[macro_use] 
 extern crate rocket;
 
@@ -9,8 +13,8 @@ extern crate embedded_hal as hal;
 
 mod protocol;
 mod irsend;
+mod temperature;
 
-use std::error::Error;
 use std::path::{ Path };
 
 use rocket::response::NamedFile;
