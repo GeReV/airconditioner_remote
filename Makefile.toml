@@ -1,0 +1,57 @@
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.front_deps]
+command = "yarn"
+args = ["install"]
+
+[tasks.build_front]
+command = "yarn"
+args = ["run", "build:prod"]
+dependencies = ["front_deps"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+dependencies = ["clean", "build_front"]
+
+[tasks.build-release-for-target]
+description = "Makes a release build for a given target"
+condition = { env_set = [ "TARGET" ] }
+command = "cargo"
+args = [
+  "build",
+  "--release",
+  "--all-features",
+  "--target",
+  "${TARGET}"
+]
+
+[tasks.zip-release-binary-for-target]
+description = "Zips up the release binary and assets"
+category = "Publish"
+condition = { env_set = [ "TARGET" ] }
+env = { OUTPUT_NAME = "${CARGO_MAKE_CRATE_NAME}-v${CARGO_MAKE_CRATE_VERSION}-${TARGET}"}
+script_runner = "@shell"
+script = [
+  "mkdir -p ${OUTPUT_NAME}",
+  "cp target/$TARGET/release/${CARGO_MAKE_CRATE_NAME} ${OUTPUT_NAME}/",
+  "cp -r target/$TARGET/release/assets ${OUTPUT_NAME}/assets",
+  "zip -r ${OUTPUT_NAME}.zip ${OUTPUT_NAME}",
+]
+
+[tasks.release]
+description = "Makes a release build for a given target"
+condition = { env_set = [ "TARGET" ] }
+dependencies = [
+    # "clean", 
+    "build_front",
+    "build-release-for-target", 
+    "zip-release-binary-for-target"
+]
+
+[tasks.default]
+description = "Default task points to the build flow"
+category = "Build"
+alias = "build"
