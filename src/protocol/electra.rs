@@ -1,13 +1,14 @@
 extern crate time;
 
 
+use serde::{ Serialize, Deserialize };
 use std::time::Duration;
 
 use crate::protocol::Protocol;
 
 const HEADER: u8 = 0xc3;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub enum FanStrength {
     Low = 0x3,
     Medium = 0x2,
@@ -15,7 +16,7 @@ pub enum FanStrength {
     Auto = 0x5,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub enum Mode {
     Hot = 0x4,
     Cold = 0x1,
@@ -24,6 +25,7 @@ pub enum Mode {
     Unknown = 0x0,
 }
 
+#[derive(Copy, Clone, Serialize, Deserialize, Debug)]
 pub struct Electra {
     pub power: bool,
     pub mode: Mode,
@@ -31,6 +33,19 @@ pub struct Electra {
     pub temp: u8,
     pub swing_h: bool,
     pub swing_v: bool,
+}
+
+impl Electra {
+    pub fn new() -> Electra {
+        Electra {
+            power: false,
+            mode: Mode::Cold,
+            fan: FanStrength::Low,
+            temp: 25,
+            swing_h: false,
+            swing_v: false
+        }
+    }
 }
 
 fn checksum(bytes: [u8; 12]) -> u8 {
