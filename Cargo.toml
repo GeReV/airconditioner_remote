@@ -14,3 +14,6 @@ rocket_contrib = "0.4.0"
 nb = "0.1.2"
 embedded-hal = "0.2.3"
 rppal = { version = "0.11.2", features = ["hal"] }
+
+[dev-dependencies]
+cargo-make = "0.19"
