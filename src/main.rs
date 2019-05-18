@@ -54,8 +54,8 @@ fn assets(asset: PathBuf, assets_dir: State<AssetsDir>) -> Option<NamedFile> {
 }
 
 #[get("/")]
-fn index() -> Option<NamedFile> {
-    return NamedFile::open(Path::new("src/web/index.html")).ok();
+fn index(assets_dir: State<AssetsDir>) -> Option<NamedFile> {
+    return NamedFile::open(Path::new(&assets_dir.0).join("index.html")).ok();
 }
 
 #[get("/", format = "json")]
