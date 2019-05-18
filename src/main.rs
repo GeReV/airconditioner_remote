@@ -20,21 +20,23 @@ mod irsend;
 mod protocol;
 mod temperature;
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use std::sync::RwLock;
 
+use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::response::status::Custom;
 use rocket::response::NamedFile;
 use rocket::State;
 use rocket_contrib::json::{Json, JsonValue};
-use rocket_contrib::serve::StaticFiles;
 
 use protocol::electra::*;
 use protocol::Protocol;
 
 type ElectraState = RwLock<Electra>;
+
+struct AssetsDir(String);
 
 fn internal_error<E: ToString>(e: E) -> Custom<JsonValue> {
     Custom(
@@ -44,6 +46,11 @@ fn internal_error<E: ToString>(e: E) -> Custom<JsonValue> {
             "reason": e.to_string()
         }),
     )
+}
+
+#[get("/<asset..>")]
+fn assets(asset: PathBuf, assets_dir: State<AssetsDir>) -> Option<NamedFile> {
+    NamedFile::open(Path::new(&assets_dir.0).join(asset)).ok()
 }
 
 #[get("/")]
@@ -92,8 +99,17 @@ fn not_found() -> JsonValue {
 
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
-        .mount("/", routes![index, temperature])
+        .mount("/", routes![index, assets, temperature])
         .mount("/remote", routes![get, update])
+        .attach(AdHoc::on_attach("Assets Config", |rocket| {
+            let assets_dir = rocket
+                .config()
+                .get_str("assets_dir")
+                .unwrap_or("assets/")
+                .to_string();
+
+            Ok(rocket.manage(AssetsDir(assets_dir)))
+        }))
         .register(catchers![not_found])
         .manage(RwLock::new(Electra::new()))
 }
