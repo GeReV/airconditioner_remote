@@ -1,7 +1,6 @@
 extern crate time;
 
-
-use serde::{ Serialize, Deserialize };
+use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
 use crate::protocol::Protocol;
@@ -43,16 +42,13 @@ impl Electra {
             fan: FanStrength::Low,
             temp: 25,
             swing_h: false,
-            swing_v: false
+            swing_v: false,
         }
     }
 }
 
 fn checksum(bytes: [u8; 12]) -> u8 {
-    let crc = bytes
-        .to_vec()
-        .into_iter()
-        .fold(0u16, |a, b| a + (b as u16));
+    let crc = bytes.to_vec().into_iter().fold(0u16, |a, b| a + (b as u16));
 
     return (crc % (2u16 << 8)) as u8;
 }
@@ -68,7 +64,10 @@ impl Protocol for Electra {
         Duration::from_micros(560)
     }
     fn message_intro(&self) -> Vec<Duration> {
-        vec![9000, 4500].into_iter().map(|us| Duration::from_micros(us)).collect()
+        vec![9000, 4500]
+            .into_iter()
+            .map(|us| Duration::from_micros(us))
+            .collect()
     }
 
     fn build_payload(&self) -> Vec<u8> {

@@ -4,29 +4,32 @@ extern crate glob;
 
 extern crate regex;
 
-#[macro_use] extern crate serde;
+#[macro_use]
+extern crate serde;
 
-#[macro_use] extern crate rocket;
-#[macro_use] extern crate rocket_contrib;
+#[macro_use]
+extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
 
 #[macro_use(block)]
 extern crate nb;
 extern crate embedded_hal as hal;
 
-mod protocol;
 mod irsend;
+mod protocol;
 mod temperature;
 
-use std::path::{ Path };
+use std::path::Path;
 
 use std::sync::RwLock;
 
+use rocket::http::Status;
+use rocket::response::status::Custom;
 use rocket::response::NamedFile;
 use rocket::State;
-use rocket::response::status::Custom;
-use rocket::http::Status;
-use rocket_contrib::serve::{ StaticFiles };
-use rocket_contrib::json::{ Json, JsonValue };
+use rocket_contrib::json::{Json, JsonValue};
+use rocket_contrib::serve::StaticFiles;
 
 use protocol::electra::*;
 use protocol::Protocol;
@@ -35,11 +38,11 @@ type ElectraState = RwLock<Electra>;
 
 fn internal_error<E: ToString>(e: E) -> Custom<JsonValue> {
     Custom(
-        Status::InternalServerError, 
+        Status::InternalServerError,
         json!({
             "status": "error",
             "reason": e.to_string()
-        })
+        }),
     )
 }
 
@@ -57,7 +60,6 @@ fn get(state: State<ElectraState>) -> Json<Electra> {
 
 #[post("/", format = "json", data = "<message>")]
 fn update(message: Json<Electra>, state: State<ElectraState>) -> Result<Status, Custom<JsonValue>> {
-
     let ir_message = message.0.build_message();
 
     // Update state.
@@ -76,9 +78,7 @@ fn temperature() -> Result<JsonValue, Custom<JsonValue>> {
     use temperature;
 
     temperature::read_u32()
-        .map(|t| json!({
-            "temperature": t
-        }))
+        .map(|t| json!({ "temperature": t }))
         .map_err(|e| internal_error(e))
 }
 

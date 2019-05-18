@@ -1,9 +1,9 @@
-use std::time::{Duration};
+use std::time::Duration;
 
 use hal::prelude::*;
 
 use rppal::hal::Timer;
-use rppal::pwm::{Channel, Pwm, Polarity, Error};
+use rppal::pwm::{Channel, Error, Polarity, Pwm};
 
 const EPSILON: Duration = Duration::from_micros(4);
 
@@ -16,7 +16,7 @@ fn sleep(delay: Duration) {
 }
 
 fn space(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
-	pwm.disable()?;
+    pwm.disable()?;
 
     if delay.as_micros() > 0 {
         sleep(delay);
@@ -25,7 +25,7 @@ fn space(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
     Ok(())
 }
 
-fn mark(pwm: &Pwm, delay: Duration) -> Result<(), Error> {	
+fn mark(pwm: &Pwm, delay: Duration) -> Result<(), Error> {
     pwm.enable()?;
 
     if delay.as_micros() > 0 {

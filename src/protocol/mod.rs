@@ -19,13 +19,11 @@ pub trait Protocol {
             for _ in 0..8 {
                 message_payload.push(self.duration_separator());
 
-                message_payload.push(
-                    if (byte & 1) == 1 { 
-                        self.duration_one() 
-                    } else {
-                        self.duration_zero()
-                    }
-                );
+                message_payload.push(if (byte & 1) == 1 {
+                    self.duration_one()
+                } else {
+                    self.duration_zero()
+                });
 
                 byte >>= 1;
             }
