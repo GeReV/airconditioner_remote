@@ -2,18 +2,23 @@ import * as webpack from "webpack";
 import * as path from "path";
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CleanWebpackPlugin from 'clean-webpack-plugin';
 
 const devMode = process.env.NODE_ENV !== 'production';
 
 const config: webpack.Configuration = {
+    mode: devMode ? 'development' : 'production',
+
     target: 'web',
 
     entry: [
-        "./js/index.ts",
+        "./src/web/js/index.ts",
     ],
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: "bundle.js",
+        filename: "bundle.[hash].js",
+        chunkFilename: "[id].[contenthash].chunk.js",
+        publicPath: devMode ? '/' : '/assets/',
     },
 
     // Enable sourcemaps for debugging webpack's output.
@@ -27,16 +32,17 @@ const config: webpack.Configuration = {
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
+        new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: 'airconditioner-remote',
             chunksSortMode: 'dependency',
-            template: path.resolve(__dirname, './index.html')
+            template: path.resolve(__dirname, './src/web/index.html')
         }),
         new MiniCssExtractPlugin({
             // Options similar to the same options in webpackOptions.output
             // both options are optional
-            filename: devMode ? '[name].css' : '[name].[hash].css',
-            chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+            filename: '[name].[hash].css',
+            chunkFilename: '[id].[hash].css',
         }),
     ],
 
@@ -49,7 +55,7 @@ const config: webpack.Configuration = {
                     "ts-loader"
                 ],
                 exclude: path.resolve(__dirname, 'node_modules'),
-                include: path.resolve(__dirname, "js"),
+                include: path.resolve(__dirname, 'src/web/js'),
             },
             {
                 test: /\.scss$/,
@@ -58,17 +64,21 @@ const config: webpack.Configuration = {
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
-                        //   hmr: process.env.NODE_ENV === 'development',
+                            //   hmr: process.env.NODE_ENV === 'development',
                         },
-                      },
-                      'css-loader',
-                      'postcss-loader',
-                      'sass-loader',
+                    },
+                    'css-loader',
+                    'postcss-loader',
+                    'sass-loader',
                 ]
             }
         ]
     },
 
+    devServer: {
+        contentBase: path.join(__dirname, 'dist'),
+        compress: true,
+    }
 };
 
 export default config;
