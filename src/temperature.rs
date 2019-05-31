@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use glob::*;
 use regex::Regex;
