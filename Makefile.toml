@@ -2,19 +2,10 @@
 command = "cargo"
 args = ["clean"]
 
-[tasks.front_deps]
-command = "yarn"
-args = ["install"]
-
-[tasks.build_front]
-command = "yarn"
-args = ["run", "build:prod"]
-dependencies = ["front_deps"]
-
 [tasks.build]
 command = "cargo"
 args = ["build"]
-dependencies = ["clean", "build_front"]
+dependencies = ["clean"]
 
 [tasks.build-release-for-target]
 description = "Makes a release build for a given target"
@@ -45,8 +36,7 @@ script = [
 description = "Makes a release build for a given target"
 condition = { env_set = [ "TARGET" ] }
 dependencies = [
-    # "clean", 
-    "build_front",
+    "clean", 
     "build-release-for-target", 
     "zip-release-binary-for-target"
 ]
