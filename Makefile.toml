@@ -20,7 +20,7 @@ args = [
 ]
 
 [tasks.zip-release-binary-for-target]
-description = "Zips up the release binary and assets"
+description = "Zips up the release binary"
 category = "Publish"
 condition = { env_set = [ "TARGET" ] }
 env = { OUTPUT_NAME = "${CARGO_MAKE_CRATE_NAME}-v${CARGO_MAKE_CRATE_VERSION}-${TARGET}"}
@@ -28,7 +28,6 @@ script_runner = "@shell"
 script = [
   "mkdir -p ${OUTPUT_NAME}",
   "cp target/$TARGET/release/${CARGO_MAKE_CRATE_NAME} ${OUTPUT_NAME}/",
-  "cp -r target/$TARGET/release/assets ${OUTPUT_NAME}/assets",
   "zip -r ${OUTPUT_NAME}.zip ${OUTPUT_NAME}",
 ]
 
