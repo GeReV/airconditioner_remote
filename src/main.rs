@@ -31,8 +31,6 @@ use protocol::Protocol;
 
 type ElectraState = RwLock<Electra>;
 
-struct AssetsDir(String);
-
 fn internal_error<E: ToString>(e: E) -> Custom<JsonValue> {
     Custom(
         Status::InternalServerError,

@@ -1,7 +1,5 @@
-extern crate time;
-
 use serde::{Deserialize, Serialize};
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 
 use crate::protocol::Protocol;
 
@@ -78,13 +76,13 @@ impl Protocol for Electra {
         let fan = self.fan as u8;
         let mode = self.mode as u8;
 
-        let now = time::now();
+        let now = time::OffsetDateTime::from(SystemTime::now());
 
         let payload: [u8; 12] = [
             HEADER,
             temperature << 3 | swing_v,
-            swing_h << 5 | (now.tm_hour as u8),
-            now.tm_min as u8,
+            swing_h << 5 | (now.hour() as u8),
+            now.minute() as u8,
             fan << 5,
             0x00,
             mode << 5,
