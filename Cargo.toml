@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 glob = "0.3.0"
 time = "0.2"
-regex = "1.5.4"
+regex = "1.5.5"
 serde = { version = "1.0", features = ["derive"] }
 rocket = "0.4.10"
 rocket_contrib = "0.4.10"
