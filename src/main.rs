@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 extern crate glob;
 
 extern crate regex;
@@ -8,8 +6,6 @@ extern crate serde;
 
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate rocket_contrib;
 
 #[macro_use(block)]
 extern crate nb;
@@ -23,15 +19,15 @@ use std::sync::RwLock;
 
 use rocket::http::Status;
 use rocket::response::status::Custom;
+use rocket::serde::json::{json, Json, Value};
 use rocket::State;
-use rocket_contrib::json::{Json, JsonValue};
 
 use protocol::electra::*;
 use protocol::Protocol;
 
 type ElectraState = RwLock<Electra>;
 
-fn internal_error<E: ToString>(e: E) -> Custom<JsonValue> {
+fn internal_error<E: ToString>(e: E) -> Custom<Value> {
     Custom(
         Status::InternalServerError,
         json!({
@@ -42,14 +38,14 @@ fn internal_error<E: ToString>(e: E) -> Custom<JsonValue> {
 }
 
 #[get("/", format = "json")]
-fn get(state: State<ElectraState>) -> Json<Electra> {
+fn get(state: &State<ElectraState>) -> Json<Electra> {
     let data = state.read().unwrap();
 
     Json(*data)
 }
 
 #[post("/", format = "json", data = "<message>")]
-fn update(message: Json<Electra>, state: State<ElectraState>) -> Result<Status, Custom<JsonValue>> {
+fn update(message: Json<Electra>, state: &State<ElectraState>) -> Result<Status, Custom<Value>> {
     let ir_message = message.0.build_message();
 
     // Update state.
@@ -64,7 +60,7 @@ fn update(message: Json<Electra>, state: State<ElectraState>) -> Result<Status, 
 }
 
 #[get("/temperature")]
-fn temperature() -> Result<JsonValue, Custom<JsonValue>> {
+fn get_temperature() -> Result<Value, Custom<Value>> {
     use temperature;
 
     temperature::read_u32()
@@ -73,21 +69,18 @@ fn temperature() -> Result<JsonValue, Custom<JsonValue>> {
 }
 
 #[catch(404)]
-fn not_found() -> JsonValue {
+fn not_found() -> Value {
     json!({
         "status": "error",
         "reason": "Resource was not found."
     })
 }
 
-fn rocket() -> rocket::Rocket {
-    rocket::ignite()
-        .mount("/", routes![temperature])
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
+        .mount("/", routes![get_temperature])
         .mount("/remote", routes![get, update])
-        .register(catchers![not_found])
+        .register("/", catchers![not_found])
         .manage(RwLock::new(Electra::new()))
-}
-
-fn main() {
-    rocket().launch();
 }
